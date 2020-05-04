@@ -7,7 +7,7 @@ Subdir = Subdir(contains({Subdir.name},{'VHO','VSO'}));
 tstart = datetime(2020,04,30,6,00,00);
 tend = datetime(2020,05,5,6,00,00);
 
-d1 = '2020-04-28 6:00:00';
+d1 = '2020-01-3 6:00:00';
 d2 = '2020-05-5 23:00:00';
 t = datetime(d1,'InputFormat','yyyy-MM-dd HH:mm:ss')
 t1 = datetime(d2,'InputFormat','yyyy-MM-dd HH:mm:ss')
@@ -24,7 +24,7 @@ for j = 1:numel(Subdir)
         cd('C:\Users\pb875\OneDrive - Cummins\Programs\Scripts')
         DataDir = strcat(strcat(Truckfolders(k).folder,'\',Truckfolders(k).name,'\Matfiles')); %% Where the matfiles are saved
         SaveDir = strcat(strcat(Truckfolders(k).folder,'\',Truckfolders(k).name)); %%Location to save plots and workspace
-        FieldTestMatExtractor_r3(DataDir,SaveDir,CleanDate1,CleanDate2,Params,tstart,tend);
+        Capability(cnt) = FieldTestMatExtractor_r3(DataDir,SaveDir,CleanDate1,CleanDate2,Params,tstart,tend);
         cnt =cnt+1;
         
     end
