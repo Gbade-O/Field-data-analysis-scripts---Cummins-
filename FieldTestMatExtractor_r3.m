@@ -20,6 +20,7 @@ for j = 1:numel(MAT)
     Params_ind = ismember(Params,listOfVariables);
     Params = Params(Params_ind);
    
+        load(strcat(MAT(j).folder,'\',MAT(j).name),Params{:},'H_FED_q_*','H_FED_ct_*')    
         time{i,cnt} = PC_TStamp_Datenum.';
         time_1s{i,cnt} = PC_TStamp_Datenum_1_Sec_Screen_2.';
         time_10s{i,cnt} = PC_TStamp_Datenum_10_Sec.';

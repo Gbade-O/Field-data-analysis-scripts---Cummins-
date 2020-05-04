@@ -1,14 +1,14 @@
 %% FED Field test data processing script 
 clc;clear all
 
-MainDir = {'C:\Users\pb875\Desktop\RandomDesktopStuff\CDAT\Chrysler\Temp Data'};
+MainDir = {'C:\Users\pb875\Desktop\RandomDesktopStuff\CDAT\Chrysler\Symmetric'};
 Subdir = dir(MainDir{:});
 Subdir = Subdir(contains({Subdir.name},{'VHO','VSO'}));
 tstart = datetime(2020,04,30,6,00,00);
 tend = datetime(2020,05,5,6,00,00);
 
 d1 = '2020-01-3 6:00:00';
-d2 = '2020-05-5 23:00:00';
+d2 = '2020-04-30 23:00:00';
 t = datetime(d1,'InputFormat','yyyy-MM-dd HH:mm:ss')
 t1 = datetime(d2,'InputFormat','yyyy-MM-dd HH:mm:ss')
 CleanDate1 = datenum(t);
@@ -21,7 +21,7 @@ for j = 1:numel(Subdir)
     Truckfolders = dir(strcat(Subdir(j).folder,'\',Subdir(j).name,'\T*'));
     
     for k = 1:numel(Truckfolders)
-        cd('C:\Users\pb875\OneDrive - Cummins\Programs\Scripts')
+        cd('C:\Users\pb875\Documents\GitHub\Scripts')
         DataDir = strcat(strcat(Truckfolders(k).folder,'\',Truckfolders(k).name,'\Matfiles')); %% Where the matfiles are saved
         SaveDir = strcat(strcat(Truckfolders(k).folder,'\',Truckfolders(k).name)); %%Location to save plots and workspace
         Capability(cnt) = FieldTestMatExtractor_r3(DataDir,SaveDir,CleanDate1,CleanDate2,Params,tstart,tend);
