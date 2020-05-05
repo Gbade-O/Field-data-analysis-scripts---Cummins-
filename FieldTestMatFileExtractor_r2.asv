@@ -46,24 +46,24 @@ for i = 1:numel(Capability)
     figure(1)
     clf
     h = subplot(2,1,1)
- %     plot(Capability(i).Old_TimeAxis,Capability(i).Old_PumpingCnts,'o','displayname','old cal')
-    plot(h,Capability(i).New_TimeAxis,Capability(i).New_PumpingCnts,'s','displayname','new cal')
     hold on
+    plot(Capability.Old_TimeAxis,Capability.Old_PumpingCnts,'o','displayname','old cal')
+    plot(Capability.New_PumpingCnts,Capability.New_PumpingCnts,'s','displayname','new cal')
+    
     grid on
-  
+    legend show
     ylabel('sim P_BPD_ct_IFMPumping (batch max)','Interpreter','none')
     
     h1 = subplot(2,1,2)
     hold on
-    histogram(Capability(i).Old_PumpingCnts,'Normalization','probability','DisplayName',sprintf('old cal (n = %d)',length(Capability(i).Old_PumpingCnts)))
-    histogram(Capability(i).New_PumpingCnts,'Normalization','probability','DisplayName',sprintf('new cal (n = %d)',length(Capability(i).New_PumpingCnts)))
+    histogram(capability_oldcal_counter,'Normalization','probability','DisplayName',sprintf('old cal (n = %d)',length(capability_oldcal_counter)))
+    histogram(capability_newcal_counter,'Normalization','probability','DisplayName',sprintf('new cal (n = %d)',length(capability_newcal_counter)))
     legend show
     grid on
     ylabel('density (%)')
     
 end
-  legend(h,Capability(:).Name,'Interpreter')
-plot(h,xticks,21*ones(1,numel(xticks)),'r--')
+plot(xticks,21*ones(1,numel(xticks)),'r--')
        
 
    %%CRINL

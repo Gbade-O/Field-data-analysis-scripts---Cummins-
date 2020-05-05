@@ -1,4 +1,4 @@
-function Capability = FieldTestMatExtractor_r3( TrucksDir,MainDir,CleanDatebegin,CleanDateEnd,Params,tstart,tend )
+function Capability = FieldTestMatExtractor_r4( TrucksDir,MainDir,CleanDatebegin,CleanDateEnd,Params,tstart,tend )
 %UNTITLED Summary of this function goes here
 %   Detailed explanation goes here
 
@@ -68,7 +68,7 @@ for j = 1:numel(MAT)
     
 end
 
-
+cd(MainDir)
 
 %% Concatenate daily matfiles, into one long data vector 
 time = cat(2,time{:});
@@ -108,52 +108,147 @@ Engine_Speed_1s = cat(2,Engine_Speed_1s{:});
 % IMA_fdbk = cat(2,IMA_fdbk{:});
 SetPump = cat(2,SetPump{:});
 
+%% calculate capability AFS
+% want to compare capability for BPD measurements *logged* only
 
+% look for changes in IFM total cycle counter; if counter changes, check
+% 1. if this was due to a gap in the log (check timestamps); if so ignore
+% 2. if the engine speed is > 1950
+%       if yes, update the IFM total cycle / pump counters for the "oldcal"
+%               case only
+%       if no, update the IFM total cycle / pump counters for the "oldcal"
+%               AND "newcal" case
+% 3. anytime either the "oldcal" or "newcal" total cycle counter rolls
+% over, log the value of the pump counter and datetime, then reset counters
 
+cycleLimit = 25;
 
-cd('C:\Users\pb875\OneDrive - Cummins\Programs\Scripts')
-%% Entering the plot section
-time_40s = Timestamp(time_10s,0).';
+% convert PC Timestamp to datetime
 time_1 = Timestamp(time_1s,0);
-time_200 = Timestamp(time_200s,0);
-time_0 = Timestamp(time,0);
 
+% initialize counters
+oldcal_pumpCount = 0;
+oldcal_cycleCount = 0;
+newcal_pumpCount = 0;
+newcal_cycleCount = 0;
+
+% initialize capability parameters
+capability_oldcal_counter = [];
+capability_oldcal_datetime = [];
+capability_newcal_counter = [];
+capability_newcal_datetime = [];
+
+% find where Cycle changes
+cycleChangeInds = find(diff(Cycle) ~= 0) + 1;
+
+% investigate each change event
+for j = 1:length(cycleChangeInds)
+    ind = cycleChangeInds(j);
+    
+    if seconds(time_1(ind) - time_1(ind-1)) > 2
+        % gap in the log; we don't know what speed the last measurements
+        % were taken at; skip this update
+        continue
+    end
+    
+    newCycles = Cycle(ind) - Cycle(ind-1);
+    if newCycles < 0
+        newCycles = newCycles + cycleLimit;
+        newPumpEvts = Pumping(ind); % we know there are at least this many; don't know exactly
+    else
+        newPumpEvts = Pumping(ind) - Pumping(ind-1);
+    end
+    
+    % update oldcal counters
+    oldcal_cycleCount = oldcal_cycleCount + newCycles;
+    if oldcal_cycleCount > cycleLimit
+        oldcal_cycleCount = oldcal_cycleCount - cycleLimit;
+        if newPumpEvts > oldcal_cycleCount
+            % some pumps in the old cycle, some in the new
+            oldcal_pumpCount = oldcal_pumpCount + (newPumpEvts - oldcal_cycleCount);
+            
+            capability_oldcal_counter = cat(1,capability_oldcal_counter,oldcal_pumpCount);
+            
+            oldcal_pumpCount = oldcal_cycleCount;
+        else
+            % assume all pumps in new cycle
+            capability_oldcal_counter = cat(1,capability_oldcal_counter,oldcal_pumpCount);
+            
+            oldcal_pumpCount = newPumpEvts;
+        end
+        
+        capability_oldcal_datetime = cat(1,capability_oldcal_datetime,time_1(ind));
+        
+    else
+        oldcal_pumpCount = oldcal_pumpCount + newPumpEvts;
+    end
+    
+    % update newcal counters
+    engSpd = Engine_Speed(ind);
+    if engSpd < 1950
+        newcal_cycleCount = newcal_cycleCount + newCycles;
+        if newcal_cycleCount > cycleLimit
+            newcal_cycleCount = newcal_cycleCount - cycleLimit;
+            if newPumpEvts > newcal_cycleCount
+                % some pumps in the old cycle, some in the new
+                newcal_pumpCount = newcal_pumpCount + (newPumpEvts - newcal_cycleCount);
+
+                capability_newcal_counter = cat(1,capability_newcal_counter,newcal_pumpCount);
+
+                newcal_pumpCount = newcal_cycleCount;
+            else
+                % assume all pumps in new cycle
+                capability_newcal_counter = cat(1,capability_newcal_counter,newcal_pumpCount);
+
+                newcal_pumpCount = newPumpEvts;
+            end
+
+            capability_newcal_datetime = cat(1,capability_newcal_datetime,time_1(ind));
+
+        else
+            newcal_pumpCount = newcal_pumpCount + newPumpEvts;
+        end
+        
+    end
+    
+end
 NewFolder = strcat('Capability-',datestr(datetime('today')));
 mkdir(MainDir,NewFolder)
 cd(strcat(MainDir,'\',NewFolder))
 save workspace 
 
-unique_idx = 0;
-cnt =1;
-for j = 1:length(Cycle)-1
-    if(Cycle(j+1) ~=Cycle(j))
-        unique_idx(cnt) = j;
-        cnt = cnt +1;
-    end
-end
 
-Cycle2  =Cycle(unique_idx);
-Pump2 = Pumping(unique_idx);
-t = time_1(unique_idx);
-eRPM = Engine_Speed(unique_idx);
-
-ind = find(Cycle2<=1);
-cnt =1;
-
-for i = 1:numel(ind)-1
-    vec = ind(i):ind(i+1)-1;
-   if(numel(vec)>1)
-       temp= Pump2(vec);
-       temp_rpm = eRPM(vec);
-       filt = find(temp_rpm<=1950);
-       BPDCnts(cnt) = numel(unique(temp(filt)));
-       plotdex(cnt) = i; 
-       cnt = cnt+1;
-   end
-end
+Capability = struct('Old_TimeAxis',capability_oldcal_datetime,'Old_PumpingCnts',capability_oldcal_counter,'New_TimeAxis',capability_newcal_datetime,'New_PumpingCnts',capability_newcal_counter,'Name',MAT(1).name(1:10))
 
 
-Capability = struct('TimeAxis',t(plotdex),'PumpingCnts',BPDCnts,'Name',MAT(1).name(1:10));
+% cd('C:\Users\pb875\OneDrive - Cummins\Programs\Scripts') 
+% %% Entering the plot section
+% time_40s = Timestamp(time_10s,0).';
+% time_1 = Timestamp(time_1s,0);
+% time_200 = Timestamp(time_200s,0);
+% time_0 = Timestamp(time,0);
+% 
+% NewFolder = strcat('Capability-',datestr(datetime('today')));
+% mkdir(MainDir,NewFolder)
+% cd(strcat(MainDir,'\',NewFolder))
+% save workspace 
+% 
+% index = find(Engine_Speed<1950);
+% index_1s = find(Engine_Speed_1s<1950)
+% Resid = Residual(index_1s);
+% TimeAxis = time_1(index);
+% BPDCounts = Pumping(index);
+% eRPM = Engine_Speed_1s(index_1s);
+% unique_idx =0;
+% cnt =1;
+% for j = 1:length(Resid)-1
+%     if(Resid(j+1) ~=Resid(j))
+%         unique_idx(cnt) = j;
+%         cnt = cnt +1;
+%     end
+% end
+% 
+% Capability = struct('TimeAxis',TimeAxis,'PumpingCnts',BPDCounts,'Name',MAT(1).name(1:10),'Residuals',Resid(unique_idx),'EngineSpeed',eRPM(unique_idx));
 
 
 
