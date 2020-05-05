@@ -30,16 +30,6 @@ for j = 1:numel(Subdir)
     end
 end
 
-% for k = 1:numel(Capability)
-%     
-%     plot(Capability(k).TimeAxis,Capability(k).PumpingCnts,'o')
-%     hold on
-%     
-% end
-% plot(xticks,21*ones(1,numel(xticks)),'r--')
-% legend(Capability(:).Name,'Threshold')
-%     
-
 %% plot AFS
 
 for i = 1:numel(Capability)

@@ -38,7 +38,6 @@ for j = 1:numel(MAT)
         Total_fueling{i,cnt} = Total_Fueling_200ms.';
         Engine_Speed2{i,cnt} = Engine_Speed_1_Sec_Screen_2.';
         Engine_Speed_1s{i,cnt} = Engine_Speed.';
-        Engine_Speed_200s{i,cnt} = Engine_Speed_200ms.';
 %         Mot_flag{i,cnt} = CBM_Mot_Flag_200ms.';
 %         EstFuel{i,cnt} = IFM_q_EOCEstFueling_200ms.';
 %         TestCylNum{i,cnt} = IFM_ct_EOCTestCylNum_200ms.';
@@ -79,17 +78,16 @@ time_10s =cat(2,time_10s{:});
 time_200s=cat(2,time_200s{:});
 % MeanInjPrs= cat(2,MeanInjPrs{:});
 Residual = cat(2,Residual{:});
-Leakage= cat(2,Leakage{:});
+% Leakage= cat(2,Leakage{:});
 % ValidDrop= cat(2,ValidDrop{:});
 Pumping =  cat(2,Pumping{:});
 % Leakage_IFM=  cat(2,Leakage_IFM{:});
 Cycle= cat(2,Cycle{:});
-Cmd= cat(2,Cmd{:});
-Fdbk = cat(2,Fdbk{:});
-Total_fueling = cat(2,Total_fueling{:});
+% Cmd= cat(2,Cmd{:});
+% Fdbk = cat(2,Fdbk{:});
+% Total_fueling = cat(2,Total_fueling{:});
 Engine_Speed = cat(2,Engine_Speed2{:});
 Engine_Speed_1s = cat(2,Engine_Speed_1s{:});
-Engine_Speed_200s = cat(2,Engine_Speed_200s{:});
 % Mot_flag = cat(2,Mot_flag{:});
 % EstFuel = cat(2,EstFuel{:});
 % TestCylNum= cat(2,TestCylNum{:});
@@ -103,11 +101,11 @@ Engine_Speed_200s = cat(2,Engine_Speed_200s{:});
 % DLAtime_1s = cat(2,DLAtime_1s{:});
 % DLAtime_10s= cat(2,DLAtime_10s{:});
 % DLAtime_200s= cat(2,DLAtime_200s{:});
-PRV_cmd = cat(2,PRV_cmd{:});
-PRV_fdbk= cat(2,PRV_fdbk{:});
+% PRV_cmd = cat(2,PRV_cmd{:});
+% PRV_fdbk= cat(2,PRV_fdbk{:});
 % APC_qr= cat(2,APC_qr{:});
-IMA_cmd = cat(2,IMA_cmd{:});
-IMA_fdbk = cat(2,IMA_fdbk{:});
+% IMA_cmd = cat(2,IMA_cmd{:});
+% IMA_fdbk = cat(2,IMA_fdbk{:});
 SetPump = cat(2,SetPump{:});
 
 %% calculate capability AFS
@@ -217,19 +215,18 @@ end
 NewFolder = strcat('Capability-',datestr(datetime('today')));
 mkdir(MainDir,NewFolder)
 cd(strcat(MainDir,'\',NewFolder))
-
+save workspace 
 
 
 Capability = struct('Old_TimeAxis',capability_oldcal_datetime,'Old_PumpingCnts',capability_oldcal_counter,'New_TimeAxis',capability_newcal_datetime,'New_PumpingCnts',capability_newcal_counter,'Name',MAT(1).name(1:10))
 
-save workspace 
 
-addpath('C:\Users\pb875\OneDrive - Cummins\Programs\Scripts') 
-%% Entering the plot section
-time_40s = Timestamp(time_10s,0).';
-time_1 = Timestamp(time_1s,0);
-time_200 = Timestamp(time_200s,0);
-time_0 = Timestamp(time,0);
+% cd('C:\Users\pb875\OneDrive - Cummins\Programs\Scripts') 
+% %% Entering the plot section
+% time_40s = Timestamp(time_10s,0).';
+% time_1 = Timestamp(time_1s,0);
+% time_200 = Timestamp(time_200s,0);
+% time_0 = Timestamp(time,0);
 % 
 % NewFolder = strcat('Capability-',datestr(datetime('today')));
 % mkdir(MainDir,NewFolder)
@@ -409,57 +406,57 @@ time_0 = Timestamp(time,0);
 % close(gcf)
 % 
 % 
-figure(4)
-unique_idx =0;
-cnt =1;
-for j = 1:length(Residual)-1
-    if(Residual(j+1) ~=Residual(j))
-        unique_idx(cnt) = j;
-        cnt = cnt +1;
-    end
-end
-subplot(211)
-plot(Engine_Speed_1s(unique_idx),Residual(unique_idx),'o')
-hold on
-plot(Engine_Speed_1s(unique_idx),40*ones(1,length(unique_idx)),'r--')
-xlabel('Engine Speed')
-ylabel('Residual')
-title('Residuals vs EngineSpeed')
-ylim([0 120])
-xlim([850 2800])
-xticks([850:150:2800])
-legend('Residuals','Threshold')
-
-subplot(212)
-Residual2 = Residual(unique_idx);
-indo = Residual2 < 80;
-Residual3 = Residual2(indo);
-indo2 = find(~(Residual3 <1));
-
-h=histfit(Residual3(indo2))
-hold on
-plot(40*ones(1,max(h(1).YData)),1:max(h(1).YData),'r--','LineWidth',3)
-xlabel('Residuals')
-ylabel('Frequency')
-xlim([ -20 80])
-title('Histogram of Residuals')
-legend('Residuals','Residual Threshold')
-suptitle(sprintf('%s, from %s to %s',MAT(1).name(1:10),tstart,tend))
-
-savefig(strcat(MainDir,'\',NewFolder,'\','ResidualsVsEngineSpeed.fig'))
-close(gcf)
-
+% figure(4)
+% unique_idx =0;
+% cnt =1;
+% for j = 1:length(Residual)-1
+%     if(Residual(j+1) ~=Residual(j))
+%         unique_idx(cnt) = j;
+%         cnt = cnt +1;
+%     end
+% end
+% subplot(211)
+% plot(Engine_Speed_1s(unique_idx),Residual(unique_idx),'o')
+% hold on
+% plot(Engine_Speed_1s(unique_idx),40*ones(1,length(unique_idx)),'r--')
+% xlabel('Engine Speed')
+% ylabel('Residual')
+% title('Residuals vs EngineSpeed')
+% ylim([0 120])
+% xlim([850 2800])
+% xticks([850:150:2800])
+% legend('Residuals','Threshold')
 % 
-figure(5)
-plot(time_40s,SetPump,time_1,Cycle,time_1,Pumping,'o')
-hold on
-line(time_1,21*ones(1,numel(time_1)))
-xlabel('Time -s')
-ylabel('Counts')
-title(sprintf('%s, BPD Pumping counts from %s to %s',MAT(1).name(1:10),tstart,tend))
-legend('Set BPD fault','P BPD ct IFMTotalCycle', 'P BPD ct IFMPumping','Threshold')
-savefig(strcat(MainDir,'\',NewFolder,'\','BPDPLot.fig'))
-close(gcf)
+% subplot(212)
+% Residual2 = Residual(unique_idx);
+% indo = Residual2 < 80;
+% Residual3 = Residual2(indo);
+% indo2 = find(~(Residual3 <1));
+% 
+% h=histfit(Residual3(indo2))
+% hold on
+% plot(40*ones(1,max(h(1).YData)),1:max(h(1).YData),'r--','LineWidth',3)
+% xlabel('Residuals')
+% ylabel('Frequency')
+% xlim([ -20 80])
+% title('Histogram of Residuals')
+% legend('Residuals','Residual Threshold')
+% suptitle(sprintf('%s, from %s to %s',MAT(1).name(1:5),tstart,tend))
+% 
+% savefig(strcat(MainDir,'\',NewFolder,'\','ResidualsVsEngineSpeed.fig'))
+% close(gcf)
+% 
+% 
+% figure(5)
+% plot(time_40s,SetPump,time_1,Cycle,time_1,Pumping,'o')
+% hold on
+% line(time_1,21*ones(1,numel(time_1)))
+% xlabel('Time -s')
+% ylabel('Counts')
+% title(sprintf('%s, BPD Pumping counts from %s to %s',MAT(1).name(1:5),tstart,tend))
+% legend('Set BPD fault','P BPD ct IFMTotalCycle', 'P BPD ct IFMPumping','Threshold')
+% savefig(strcat(MainDir,'\',NewFolder,'\','BPDPLot.fig'))
+% close(gcf)
 % 
 % 
 % figure(6)
@@ -500,11 +497,11 @@ close(gcf)
 % 
 % 
 % 
-addpath('C:\Users\pb875\OneDrive - Cummins\Programs\Scripts')
-run InDepth_plot.m
-savefig(strcat(MainDir,'\',NewFolder,'\','InDepth.fig'))
-close(gcf)
-
+% addpath('C:\Users\pb875\OneDrive - Cummins\Programs\Scripts')
+% run InDepth_plot.m
+% savefig(strcat(MainDir,'\',NewFolder,'\','InDepth.fig'))
+% close(gcf)
+% 
 % % 
 % % %% Adding a new section for capability 
 
