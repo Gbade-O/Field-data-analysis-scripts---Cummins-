@@ -11,6 +11,8 @@ Dir = TrucksDir;
 cd(Dir);
 MAT = dir('**/*.mat');
 MAT = MAT(find(([MAT.datenum]>=CleanDatebegin & [MAT.datenum]<CleanDateEnd)));
+CylAve = {};
+NoDecisions =0;
 
 %% Assign data from each matfile into a variable
 for j = 1:numel(MAT)
@@ -18,52 +20,69 @@ for j = 1:numel(MAT)
     cd(MAT(j).folder)
     listOfVariables = who('-file',MAT(j).name);
     Params_ind = ismember(Params,listOfVariables);
-    Params = Params(Params_ind);
-   
-        load(strcat(MAT(j).folder,'\',MAT(j).name),Params{:},'H_FED_q_*','H_FED_ct_*')    
+    
+    
+    load(strcat(MAT(j).folder,'\',MAT(j).name),Params{:},'H_FED_q*')
+    if(Params_ind(44))
+        
+        for k = 1:6
+            CylAve{k,cnt} = eval(['H_FED_q_CylAveFuelingErrors',int2str(k-1),'_10_Sec']).';
+        end
+         NoDecisions = 0;
+    elseif(Params_ind(45))
+        for k = 1:6
+            CylAve{k,cnt} = eval(['H_FED_q_CylAveFuelingErrors',int2str(k-1),'_200ms']).';
+        end
+         NoDecisions = 0;
+    else
+        NoDecisions = 1;
+    end
+    
+    if(~NoDecisions)
+        
         time{i,cnt} = PC_TStamp_Datenum.';
         time_1s{i,cnt} = PC_TStamp_Datenum_1_Sec_Screen_2.';
         time_10s{i,cnt} = PC_TStamp_Datenum_10_Sec.';
         time_200s{i,cnt} = PC_TStamp_Datenum_200ms.';
-%         MeanInjPrs{i,cnt} = IFM_hp_EOCMeanInjPressure_200ms.';
+        %         MeanInjPrs{i,cnt} = IFM_hp_EOCMeanInjPressure_200ms.';
         Residual{i,cnt} = IFM_hp_Residual.';
         Leakage{i,cnt} = IFM_r_ParasiticLeakage.';
-%         ValidDrop{i,cnt} = IFM_s_ValidPressureDrop_200ms.';
-%         Coolant_Temp{i,cnt} = Coolant_Temperature_200ms.';
+        %         ValidDrop{i,cnt} = IFM_s_ValidPressureDrop_200ms.';
+        %         Coolant_Temp{i,cnt} = Coolant_Temperature_200ms.';
         Pumping{i,cnt} = P_BPD_ct_IFMPumping_1_Sec_Screen_2.';
-%         Leakage_IFM{i,cnt} =   P_BPD_ct_IFMLeakage_1_Sec_Screen_2.';
+        %         Leakage_IFM{i,cnt} =   P_BPD_ct_IFMLeakage_1_Sec_Screen_2.';
         Cycle{i,cnt} = P_BPD_ct_IFMTotalCycle_1_Sec_Screen_2.';
         Cmd{i,cnt} = APC_hp_Cmd_200ms.';
         Fdbk{i,cnt} = APC_hp_Fdbk_200ms.';
         Total_fueling{i,cnt} = Total_Fueling_200ms.';
         Engine_Speed2{i,cnt} = Engine_Speed_1_Sec_Screen_2.';
         Engine_Speed_1s{i,cnt} = Engine_Speed.';
-        Engine_Speed_200s{i,cnt} = Engine_Speed_200ms.';
-%         Mot_flag{i,cnt} = CBM_Mot_Flag_200ms.';
-%         EstFuel{i,cnt} = IFM_q_EOCEstFueling_200ms.';
-%         TestCylNum{i,cnt} = IFM_ct_EOCTestCylNum_200ms.';
-%         CCPO{i,cnt} = Combustion_Control_Path_Owner_200ms.';
-%         Gear{i,cnt} = CANC_Current_Gear_200ms.';
-%         ENGState{i,cnt} = Current_Engine_State_200ms.';
-%         DLAtime{i,cnt} = DLA_Timestamp.';
-%         DLAtime_1s{i,cnt} = DLA_Timestamp_1_Sec_Screen_2.';
-%         DLAtime_10s{i,cnt} = DLA_Timestamp_10_Sec.';
-%         DLAtime_200s{i,cnt} = DLA_Timestamp_200ms.';
+        Engine_Speed200ms{i,cnt} = Engine_Speed_200ms.';
+        %         Mot_flag{i,cnt} = CBM_Mot_Flag_200ms.';
+        %         EstFuel{i,cnt} = IFM_q_EOCEstFueling_200ms.';
+        %         TestCylNum{i,cnt} = IFM_ct_EOCTestCylNum_200ms.';
+        %         CCPO{i,cnt} = Combustion_Control_Path_Owner_200ms.';
+        %         Gear{i,cnt} = CANC_Current_Gear_200ms.';
+        %         ENGState{i,cnt} = Current_Engine_State_200ms.';
+        %         DLAtime{i,cnt} = DLA_Timestamp.';
+        %         DLAtime_1s{i,cnt} = DLA_Timestamp_1_Sec_Screen_2.';
+        %         DLAtime_10s{i,cnt} = DLA_Timestamp_10_Sec.';
+        %         DLAtime_200s{i,cnt} = DLA_Timestamp_200ms.';
         PRV_cmd{i,cnt} = PRV_i_Cmd_200ms.';
         PRV_fdbk{i,cnt} = PRV_i_Fdbk_200ms.';
-%         APC_qr{i,cnt} = APC_qr_Cmd_200ms.';
+        %         APC_qr{i,cnt} = APC_qr_Cmd_200ms.';
         IMA_cmd{i,cnt} = H_IMA_i_Cmd_200ms.';
         IMA_fdbk{i,cnt} = H_IMA_i_Fltr_200ms.';
         SetPump{i,cnt} = P_BPD_ct_SetIfmPumpErr_10_Sec.';
-% 
-%         for k = 1:6
-%             CylAve{k,cnt} = eval(['H_FED_q_CylAveFuelingErrors',int2str(k-1),'_10_Sec']).';
-%             
-%         end
-%         DosingFuel{i,cnt} = P_FED_q_DosingFuelAdj_10_Sec.';
-%         CompensationOntime{i,cnt} = P_FED_ti_AveOntimeErrorBias.';
-%         CompensationFuel{i,cnt}= P_FED_q_AveFuelingErrorBias.';
+        KeyCycles{i,cnt} = OBD_Number_Of_Key_Cycles_10_Sec.';
+        VehSpeed{i,cnt} = Vehicle_Speed_200ms.';
+        %
+        
+        %         DosingFuel{i,cnt} = P_FED_q_DosingFuelAdj_10_Sec.';
+        %         CompensationOntime{i,cnt} = P_FED_ti_AveOntimeErrorBias.';
+        %         CompensationFuel{i,cnt}= P_FED_q_AveFuelingErrorBias.';
         cnt = cnt+1;
+    end
     
     
     
@@ -89,7 +108,7 @@ Fdbk = cat(2,Fdbk{:});
 Total_fueling = cat(2,Total_fueling{:});
 Engine_Speed = cat(2,Engine_Speed2{:});
 Engine_Speed_1s = cat(2,Engine_Speed_1s{:});
-Engine_Speed_200s = cat(2,Engine_Speed_200s{:});
+Engine_Speed200ms = cat(2,Engine_Speed200ms{:});
 % Mot_flag = cat(2,Mot_flag{:});
 % EstFuel = cat(2,EstFuel{:});
 % TestCylNum= cat(2,TestCylNum{:});
@@ -109,6 +128,14 @@ PRV_fdbk= cat(2,PRV_fdbk{:});
 IMA_cmd = cat(2,IMA_cmd{:});
 IMA_fdbk = cat(2,IMA_fdbk{:});
 SetPump = cat(2,SetPump{:});
+KeyCycles = cat(2,KeyCycles{:});
+VehSpeed = cat(2,VehSpeed{:});
+
+CylAvgs = [];
+for k = 1:6
+    temp = CylAve(k,:);
+    CylAvgs = cat(1,CylAvgs,cat(2,temp{:}));
+end
 
 %% calculate capability AFS
 % want to compare capability for BPD measurements *logged* only
@@ -214,22 +241,159 @@ for j = 1:length(cycleChangeInds)
     end
     
 end
+%% IUPR analysis AFS
+% for each OBD Key Cycle (should be roughly equivalent to OBD Op Cycle)
+% logged, see how much motoring time would be available to IFM with the old
+% cal vs. with the new cal. Also track when FED made a decision on all
+% cylinders, and track how much motoring time that took. Ignore
+% CtrlPathOwner, so this total motoring time will potentially include times
+% when enable conditions weren't met, or FED didn't have arbitration.
+
+C_IFM_ti_MaxZeroFuelTime = 20;
+C_IFM_n_MinSpeed = 850;
+C_IFM_n_MinVehicleSpeed = 32;
+
+% % convert PC Timestamps to datetime % slow
+% time_10s = Timestamp(time_10s,0);
+% time_200s = Timestamp(time_200s,0);
+
+% initialize IUPR tracking data
+iupr_keyCycle = [];
+iupr_startTime = [];
+iupr_endTime = [];
+iupr_oldCalMotTime = [];
+iupr_newCalMotTime = [];
+iupr_MotTimeToFedDec = [];
+
+% find all key cycles, and start and end times
+firstInd = find(~isnan(KeyCycles),1,'first');
+lastInd = firstInd;
+currKeyCycle = KeyCycles(firstInd);
+
+for j = (firstInd+1):length(KeyCycles)
+    if ~isnan(KeyCycles(j))
+        if KeyCycles(j) ~= currKeyCycle
+            
+            iupr_keyCycle = cat(1,iupr_keyCycle,currKeyCycle);
+            iupr_startTime = cat(1,iupr_startTime,time_10s(firstInd));
+            iupr_endTime = cat(1,iupr_endTime,time_10s(lastInd));
+            
+            firstInd = j;
+            lastInd = j;
+            currKeyCycle = KeyCycles(j);
+            
+        else
+            lastInd = j;
+        end
+    end
+    
+end
+
+iupr_keyCycle = cat(1,iupr_keyCycle,currKeyCycle);
+iupr_startTime = cat(1,iupr_startTime,time_10s(firstInd));
+iupr_endTime = cat(1,iupr_endTime,time_10s(lastInd));
+
+% calculate motoring times for each cycle
+for j = 1:length(iupr_keyCycle)
+    
+    % subset arrays for this key cycle
+    inds200ms = iupr_startTime(j) <= time_200s & time_200s <= iupr_endTime(j);
+    if ~any(inds200ms)
+        iupr_oldCalMotTime = cat(1,iupr_oldCalMotTime,nan);
+        iupr_newCalMotTime = cat(1,iupr_newCalMotTime,nan);
+        iupr_MotTimeToFedDec = cat(1,iupr_MotTimeToFedDec,nan);
+        continue
+    end
+    cycTime200ms = time_200s(inds200ms);
+    cycEngSpd = Engine_Speed200ms(inds200ms);
+    cycFuel = Total_fueling(inds200ms);
+    cycVehSpd = VehSpeed(inds200ms);
+    
+    inds10s = iupr_startTime(j) <= time_10s & time_10s <= iupr_endTime(j);
+    cycTime10s = time_10s(inds10s);
+    cycCylAvgs = CylAvgs(:,inds10s);
+    
+    % find when FED made a decision (if it did)
+    efiDecisionInd = find(all(cycCylAvgs ~= 0,1) & all(cycCylAvgs ~= cycCylAvgs(:,1),1),1,'first');
+    if isempty(efiDecisionInd)
+        efiDecisionTime = nan;
+    else
+        efiDecisionTime = cycTime10s(efiDecisionInd);
+    end
+    
+    % look for motoring events
+    totMotTimeOldCal = 0;
+    totMotTimeNewCal = 0;
+    
+    zeroFuelTime = 0;
+    
+    fedDecFound = 0;
+    loggedPriorToFedDec = 0;
+    totMotToFed = nan;
+    
+    for k = 1:length(cycTime200ms)
+        
+        if ~loggedPriorToFedDec && cycTime200ms(k) < efiDecisionTime
+            % data timestamps aren't in order for some reason, so make sure
+            % we have some data logged prior to FED making a decision
+            loggedPriorToFedDec = 1;
+        end
+        
+        if ~fedDecFound && loggedPriorToFedDec && cycTime200ms(k) >= efiDecisionTime
+            totMotToFed = totMotTimeOldCal;
+            fedDecFound = 1;
+        end
+        
+        if cycFuel(k) > 0
+            zeroFuelTime = 0;
+        elseif ~isnan(cycFuel(k))
+            % motoring
+            zeroFuelTime = zeroFuelTime + 0.2;
+            
+            if zeroFuelTime <= C_IFM_ti_MaxZeroFuelTime && cycVehSpd(k) > C_IFM_n_MinVehicleSpeed && cycEngSpd(k) > C_IFM_n_MinSpeed
+                % valid motoring time for old cal
+                totMotTimeOldCal = totMotTimeOldCal + 0.2;
+                
+                if cycEngSpd(k) < 1950
+                    % valid motoring time for new cal
+                    totMotTimeNewCal = totMotTimeNewCal + 0.2;
+                    
+                end
+                
+            end
+             
+        end
+        
+    end
+    
+    iupr_newCalMotTime = cat(1,iupr_newCalMotTime,totMotTimeNewCal);
+    iupr_oldCalMotTime = cat(1,iupr_oldCalMotTime,totMotTimeOldCal);
+    iupr_MotTimeToFedDec = cat(1,iupr_MotTimeToFedDec,totMotToFed);
+    
+end
+
+% iupr_startTime = Timestamp(iupr_startTime,0);
+% iupr_endTime = Timestamp(iupr_endTime,0);
+
 NewFolder = strcat('Capability-',datestr(datetime('today')));
 mkdir(MainDir,NewFolder)
 cd(strcat(MainDir,'\',NewFolder))
 
 
 
-Capability = struct('Old_TimeAxis',capability_oldcal_datetime,'Old_PumpingCnts',capability_oldcal_counter,'New_TimeAxis',capability_newcal_datetime,'New_PumpingCnts',capability_newcal_counter,'Name',MAT(1).name(1:10))
+Capability = struct('Old_TimeAxis',capability_oldcal_datetime,'Old_PumpingCnts',capability_oldcal_counter,... 
+    'New_TimeAxis',capability_newcal_datetime,'New_PumpingCnts',capability_newcal_counter,...
+    'Old_Mot',iupr_oldCalMotTime,'New_Mot',iupr_newCalMotTime,'TimetoDec',iupr_MotTimeToFedDec,'Name',MAT(1).name(1:10))
 
-save workspace 
 
 addpath('C:\Users\pb875\OneDrive - Cummins\Programs\Scripts') 
 %% Entering the plot section
-time_40s = Timestamp(time_10s,0).';
-time_1 = Timestamp(time_1s,0);
-time_200 = Timestamp(time_200s,0);
-time_0 = Timestamp(time,0);
+% time_40s = Timestamp(time_10s,0).';
+% time_1 = Timestamp(time_1s,0);
+% time_200 = Timestamp(time_200s,0);
+% time_0 = Timestamp(time,0);
+
+save workspace 
 % 
 % NewFolder = strcat('Capability-',datestr(datetime('today')));
 % mkdir(MainDir,NewFolder)
@@ -409,57 +573,57 @@ time_0 = Timestamp(time,0);
 % close(gcf)
 % 
 % 
-figure(4)
-unique_idx =0;
-cnt =1;
-for j = 1:length(Residual)-1
-    if(Residual(j+1) ~=Residual(j))
-        unique_idx(cnt) = j;
-        cnt = cnt +1;
-    end
-end
-subplot(211)
-plot(Engine_Speed_1s(unique_idx),Residual(unique_idx),'o')
-hold on
-plot(Engine_Speed_1s(unique_idx),40*ones(1,length(unique_idx)),'r--')
-xlabel('Engine Speed')
-ylabel('Residual')
-title('Residuals vs EngineSpeed')
-ylim([0 120])
-xlim([850 2800])
-xticks([850:150:2800])
-legend('Residuals','Threshold')
-
-subplot(212)
-Residual2 = Residual(unique_idx);
-indo = Residual2 < 80;
-Residual3 = Residual2(indo);
-indo2 = find(~(Residual3 <1));
-
-h=histfit(Residual3(indo2))
-hold on
-plot(40*ones(1,max(h(1).YData)),1:max(h(1).YData),'r--','LineWidth',3)
-xlabel('Residuals')
-ylabel('Frequency')
-xlim([ -20 80])
-title('Histogram of Residuals')
-legend('Residuals','Residual Threshold')
-suptitle(sprintf('%s, from %s to %s',MAT(1).name(1:10),tstart,tend))
-
-savefig(strcat(MainDir,'\',NewFolder,'\','ResidualsVsEngineSpeed.fig'))
-close(gcf)
-
+% figure(4)
+% unique_idx =0;
+% cnt =1;
+% for j = 1:length(Residual)-1
+%     if(Residual(j+1) ~=Residual(j))
+%         unique_idx(cnt) = j;
+%         cnt = cnt +1;
+%     end
+% end
+% subplot(211)
+% plot(Engine_Speed_1s(unique_idx),Residual(unique_idx),'o')
+% hold on
+% plot(Engine_Speed_1s(unique_idx),40*ones(1,length(unique_idx)),'r--')
+% xlabel('Engine Speed')
+% ylabel('Residual')
+% title('Residuals vs EngineSpeed')
+% ylim([0 120])
+% xlim([850 2800])
+% xticks([850:150:2800])
+% legend('Residuals','Threshold')
 % 
-figure(5)
-plot(time_40s,SetPump,time_1,Cycle,time_1,Pumping,'o')
-hold on
-line(time_1,21*ones(1,numel(time_1)))
-xlabel('Time -s')
-ylabel('Counts')
-title(sprintf('%s, BPD Pumping counts from %s to %s',MAT(1).name(1:10),tstart,tend))
-legend('Set BPD fault','P BPD ct IFMTotalCycle', 'P BPD ct IFMPumping','Threshold')
-savefig(strcat(MainDir,'\',NewFolder,'\','BPDPLot.fig'))
-close(gcf)
+% subplot(212)
+% Residual2 = Residual(unique_idx);
+% indo = Residual2 < 80;
+% Residual3 = Residual2(indo);
+% indo2 = find(~(Residual3 <1));
+% 
+% h=histfit(Residual3(indo2))
+% hold on
+% plot(40*ones(1,max(h(1).YData)),1:max(h(1).YData),'r--','LineWidth',3)
+% xlabel('Residuals')
+% ylabel('Frequency')
+% xlim([ -20 80])
+% title('Histogram of Residuals')
+% legend('Residuals','Residual Threshold')
+% suptitle(sprintf('%s, from %s to %s',MAT(1).name(1:10),tstart,tend))
+% 
+% savefig(strcat(MainDir,'\',NewFolder,'\','ResidualsVsEngineSpeed.fig'))
+% close(gcf)
+% 
+% % 
+% figure(5)
+% plot(time_40s,SetPump,time_1,Cycle,time_1,Pumping,'o')
+% hold on
+% line(time_1,21*ones(1,numel(time_1)))
+% xlabel('Time -s')
+% ylabel('Counts')
+% title(sprintf('%s, BPD Pumping counts from %s to %s',MAT(1).name(1:10),tstart,tend))
+% legend('Set BPD fault','P BPD ct IFMTotalCycle', 'P BPD ct IFMPumping','Threshold')
+% savefig(strcat(MainDir,'\',NewFolder,'\','BPDPLot.fig'))
+% close(gcf)
 % 
 % 
 % figure(6)
@@ -500,10 +664,11 @@ close(gcf)
 % 
 % 
 % 
-addpath('C:\Users\pb875\OneDrive - Cummins\Programs\Scripts')
-run InDepth_plot.m
-savefig(strcat(MainDir,'\',NewFolder,'\','InDepth.fig'))
-close(gcf)
+% figure(6)
+% addpath('C:\Users\pb875\Documents\GitHub\Scripts')
+% run InDepth_plot.m
+% savefig(strcat(MainDir,'\',NewFolder,'\','InDepth2'))
+% close(gcf)
 
 % % 
 % % %% Adding a new section for capability 

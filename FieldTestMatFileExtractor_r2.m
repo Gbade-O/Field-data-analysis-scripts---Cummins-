@@ -1,16 +1,17 @@
 %% FED Field test data processing script 
 clc;clear all
-
+tic
 MainDir = {'C:\Users\pb875\Desktop\RandomDesktopStuff\CDAT\Chrysler\Symmetric'};
 Subdir = dir(MainDir{:});
-Subdir = Subdir(contains({Subdir.name},{'VHO','VSO'}));
-tstart = datetime(2020,04,30,6,00,00);
-tend = datetime(2020,05,5,6,00,00);
+Subdir = Subdir(contains({Subdir.name},{'VSO','VHO'}));
 
-d1 = '2020-01-3 6:00:00';
-d2 = '2020-04-5 23:00:00';
+
+d1 = '2020-1-1 6:00:00';
+d2 = '2020-04-30 23:00:00';
 t = datetime(d1,'InputFormat','yyyy-MM-dd HH:mm:ss')
 t1 = datetime(d2,'InputFormat','yyyy-MM-dd HH:mm:ss')
+tstart = t;
+tend = t1;
 CleanDate1 = datenum(t);
 CleanDate2 = datenum(t1);
 
@@ -21,7 +22,7 @@ for j = 1:numel(Subdir)
     Truckfolders = dir(strcat(Subdir(j).folder,'\',Subdir(j).name,'\T*'));
     
     for k = 1:numel(Truckfolders)
-        cd('C:\Users\pb875\Documents\GitHub\Scripts')
+        addpath('C:\Users\pb875\Documents\GitHub\Scripts')
         DataDir = strcat(strcat(Truckfolders(k).folder,'\',Truckfolders(k).name,'\Matfiles')); %% Where the matfiles are saved
         SaveDir = strcat(strcat(Truckfolders(k).folder,'\',Truckfolders(k).name)); %%Location to save plots and workspace
         Capability(cnt) = FieldTestMatExtractor_r4(DataDir,SaveDir,CleanDate1,CleanDate2,Params,tstart,tend);
@@ -30,197 +31,85 @@ for j = 1:numel(Subdir)
     end
 end
 
-%% plot AFS
+%% Capability plots 
+toc
+save workspace
+% %% plot AFS
+h =figure(1)
+clf
+
 
 for i = 1:numel(Capability)
-    figure(1)
-    clf
-    h = subplot(2,1,1)
- %     plot(Capability(i).Old_TimeAxis,Capability(i).Old_PumpingCnts,'o','displayname','old cal')
-    plot(h,Capability(i).New_TimeAxis,Capability(i).New_PumpingCnts,'s','displayname','new cal')
-    hold on
-    grid on
-  
-    ylabel('sim P_BPD_ct_IFMPumping (batch max)','Interpreter','none')
     
-    h1 = subplot(2,1,2)
-    hold on
-    histogram(Capability(i).Old_PumpingCnts,'Normalization','probability','DisplayName',sprintf('old cal (n = %d)',length(Capability(i).Old_PumpingCnts)))
-    histogram(Capability(i).New_PumpingCnts,'Normalization','probability','DisplayName',sprintf('new cal (n = %d)',length(Capability(i).New_PumpingCnts)))
-    legend show
+    a=subplot(2,1,1)
+    plot(a,Capability(i).Old_TimeAxis,Capability(i).Old_PumpingCnts,'o','displayname','old cal')
     grid on
-    ylabel('density (%)')
+   hold on
+    
+    
+    a1=subplot(2,1,2)
+    plot(a1,Capability(i).New_TimeAxis,Capability(i).New_PumpingCnts,'s','displayname','new cal')
+    hold on
+    grid on
+    
+    %     ylabel('sim P_BPD_ct_IFMPumping (batch max)','Interpreter','none')
+    %
+    %     h1 = subplot(2,1,2)
+    %     hold on
+    %     histogram(Capability(i).Old_PumpingCnts,'Normalization','probability','DisplayName',sprintf('old cal (n = %d)',length(Capability(i).Old_PumpingCnts)))
+    %     histogram(Capability(i).New_PumpingCnts,'Normalization','probability','DisplayName',sprintf('new cal (n = %d)',length(Capability(i).New_PumpingCnts)))
+    %     legend show
+    %     grid on
+    %     ylabel('density (%)')
     
 end
-  legend(h,Capability(:).Name,'Interpreter')
-plot(h,xticks,21*ones(1,numel(xticks)),'r--')
-       
 
-   %%CRINL
-        % C:\Users\pb875\Desktop\RandomDesktopStuff\CDAT\Chrysler\CRINL\T1017_DJ22_KG551017_59082725
-        %'C:\Users\pb875\Desktop\RandomDesktopStuff\CDAT\Chrysler\CRINL\T1503'
-        
-        % Symmetric
-        % 'C:\Users\pb875\Desktop\RandomDesktopStuff\CDAT\Chrysler\Symmetric\VSO\T6143'
-        % 'C:\Users\pb875\Desktop\RandomDesktopStuff\CDAT\Chrysler\Symmetric\VSO\T7487'
-        % 'C:\Users\pb875\Desktop\RandomDesktopStuff\CDAT\Chrysler\Symmetric\VHO\T6211',
-        % 'C:\Users\pb875\Desktop\RandomDesktopStuff\CDAT\Chrysler\Symmetric\VHO\T9761',
-        % 'C:\Users\pb875\Desktop\RandomDesktopStuff\CDAT\Chrysler\Symmetric\VHO\T2195'
-        % 'C:\Users\pb875\Desktop\RandomDesktopStuff\CDAT\Chrysler\Symmetric\Thunderbolt\T2151'
-        
-        %Kestrel Line up
-        %'C:\Users\pb875\Desktop\RandomDesktopStuff\CDAT\Chrysler\Kestrel\VSO\T3269'
-        % 'C:\Users\pb875\Desktop\RandomDesktopStuff\CDAT\Chrysler\Kestrel\Thunderbolt\T2170',
-        % 'C:\Users\pb875\Desktop\RandomDesktopStuff\CDAT\Chrysler\Kestrel\Thunderbolt\T4046',
-        % 'C:\Users\pb875\Desktop\RandomDesktopStuff\CDAT\Chrysler\Kestrel\VSO\T1078_DJ21_LG101078_59347746',
-        % 'C:\Users\pb875\Desktop\RandomDesktopStuff\CDAT\Chrysler\Kestrel\VSO\T1503',
-        % 'C:\Users\pb875\Desktop\RandomDesktopStuff\CDAT\Chrysler\Kestrel\VSO\T7761',
-        % 'C:\Users\pb875\Desktop\RandomDesktopStuff\CDAT\Chrysler\Kestrel\VHO\T9724',
-        % 'C:\Users\pb875\Desktop\RandomDesktopStuff\CDAT\Chrysler\Kestrel\VHO\T9755'};
-       
-      
-      
- 
- 
- 
-% %%  subplot(313)
-% %  plot(
-% %  
+plot(a,xticks,21*ones(1,numel(xticks)),'r--')
+plot(a1,xticks,21*ones(1,numel(xticks)),'r--')
+legend(a1,{Capability(:).Name,'Threshold'},'Interpreter','none')
+title(a,'BPD error counter without step 3 fix')
+legend(a,{Capability(:).Name,'Threshold'},'Interpreter','none')
+title(a1,'BPD error counter with step 3 fix')
+ylabel(a1,'Error Counter')
+ylabel(a,'Error Counter')
+% toc
 % 
-%  
-%  
-%         
-% %     figure(2)
-% %     subplot(2,3,i)
-% %     histogram(Cyl(unique_idx))
-% %     info = fitdist(Cyl(unique_idx).','Normal');
-% %     text(5,4500,strcat('Mean:', int2str(info.mu)))
-% %     hold on
-% %     text(5,4250,strcat('Std dev:', int2str(info.sigma)))
-% %     xlim([ -10 15])
-% %     ylim([0 7000])
-% %     title(sprintf('Cylinder %d',i))
-% % %     plot(time_10s,Cyl,strcat(Color_Vec(i),'o'))
-% % %     hold on
-% % %    
-% % end
-% 
-% legend('Cyl1','Cyl2','Cyl3','Cyl4','Cyl5','Cyl6')
-% hold off
-%     title(sprintf('T9724, from %s to %s',MAT(1).date,MAT(end).date))
+%% plot AFS
+figure(2)
+clf
+
+colorOrder = get(gca,'ColorOrder');
+for i = 1:2
+    subplot(2,2,1:2)
+    b = bar([Capability(i).Old_Mot,Capability(i).TimetoDec,Capability(i).New_Mot]);
+    legend({'motoring time - old cal','motoring time until FED decision - old cal','motoring time - new cal'})
+    grid on
+%     % set(gca,'XTickLabel',datestr(iupr_startTime))
+%     set(gca,'XTick',get(b(1),'XData'))
+% %     set(gca,'XTickLabel',iupr_keyCycle)
+    xlabel('OBD Key Cycle')
+    ylabel('motoring time (s)')
+    
+    for j = 1:3
+        b(j).FaceColor = colorOrder(j,:);
+    end
+    
+%     subplot(2,2,3)
+%     hold on
 %     
-% ind = find(ValidDrop == 1);
-% % figure(2)
-% % plot(Coolant(ind),Leakage(ind),'o')
-% cnt =1;
-% for i = 2:length(Residual)-1
-%     if(Residual(i) ~= Residual(i-1))
-%         ind(cnt) = i;
-%         cnt =cnt+1;
-%     end
-% end
-% plot(Coolant(ind),Residual(ind),'o')
-% 
-% plot(Residual(ind),Leakage(ind),'o')
-%             
-%             
-%                             
-%                     
-%  plot(time_1s,Pumping,'ko')
-%  hold on
-%  plot(time_1s,Cycle)
-%  ylim([0 25])
-%  xlabel('ECM Run Time')
-%  ylabel('FED decisions with pumping')
-%  title(sprintf('Data from %s to %s',MAT(1).date, MAT(end).date))
-%  legend('P BPD Ct IFMPumping','P BPD ct IFMTotalCycle')
-%                     
-%                     
-%  motoring_ind = find( Total_fueling == 0)  ;
-%  plot(time_200s(motoring_ind),Cmd(motoring_ind))
-%  hold on
-%  plot(time_200s(motoring_ind),Fdbk(motoring_ind))
-%  legend('Cmd','Fdbk')
-%                     
-%                     
-% 
-%  plot(time(ind),Engine_Speed(ind))
-%  ylabel('Engine Speed')
-%  hold on
-%  yyaxis right
-%  plot(time(ind),Residual(ind),'o')
-%  ylabel('Residuals')
-%  xlabel('time')
-%  ylim([ 0 100])
-%  legend('Engine Speed','Residuals')
-%  
-%                     
-%                                        
-%                     
-%                     
-%                     
-%                     
-%                     
-%                     
-%                     
-%                     
-%                     
-%                     
-%                     
-% %                     
-% %                 m = matfile( strcat(MAT(j).folder,'\',MAT(j).name));
-% %                 for k = 1: 6
-% %                 try
-% %                     if(strcmp(folder,MAT(j).folder)==0)
-% %                         cd(MAT(j).folder);
-% %                         folder = MAT(j).folder;
-% %                     end
-% %                     
-% 
-%     
-%    
-% %     Count = 1;
-% %     FED_MAT = CylData(:,:,i);
-% %     ind = find( cellfun('isempty',FED_MAT(1,:)) == 1);
-% %     FED_MAT(:,ind) = [];
-% % 
-% %      
-% %         
-% %    for n = 1:6
-% %     
-% %         FED{n,1} = transpose(cat(1,FED_MAT{n,:}));
-% %         for m = 1:numel(FED{n,1})-1
-% %             if(FED{n,1}(m+1) == FED{n,1}(m))
-% %                 Filt(m) = 0;
-% %             else
-% %                 Filt(m) = 1;
-% %             end
-% %         end
-% %         
-% %         ind = find( Filt == 1) + 1;
-% %         Data = FED{n,1}(ind);
-% %         Decision = find( Data <= -6);
-% %         if( Decision > 4)
-% %             for p = 1:numel(Data)-2
-% %                 if((Data(p)<=-6) && (Data(p+2) <= -6))
-% %                     Count = Count +1;
-% %                 end
-% %             end
-% %         else
-% %             %%fprintf('Not enough failed points on Cylinder %d, Truck %s\n',n,S(i).folder);
-% %         end
-% %         Cylinder(n).MIL = Count -1;
-% %         
-% %    end
-% %             
-% %     Truck(i).CylData = Cylinder;
-% %     Truck(i).Name = TrucksDir{i}(76:86)
-% %    
-% %     Count = 1;
-% %    end
-% % 
-% %             
-% %             
-% %             
-% %    
-% %             
+%     n = length(iupr_oldCalMotTime);
+%     g = cat(1,repmat({'old cal'},n,1),repmat({'FED decision'},n,1),repmat({'new cal'},n,1));
+%     boxplot([iupr_oldCalMotTime;iupr_MotTimeToFedDec;iupr_newCalMotTime],g,...
+%         'Orientation','horizontal','ColorGroup',{'old cal','FED decision','new cal'},'Colors',colorOrder,'BoxStyle','filled')
+%     grid on
+%     xlabel('motoring time (s)')
+    
+    subplot(2,2,3:4)
+    bar([sum(~isnan(Capability(i).TimetoDec)),sum(Capability(i).New_Mot > Capability(i).TimetoDec)])
+    set(gca,'XTickLabel',{'Key cycles w/ FED decisions - old cal','Key cycles w/ sufficient mot. time for FED - new cal'})
+    grid on
+    pause
+    
+end
+
+         

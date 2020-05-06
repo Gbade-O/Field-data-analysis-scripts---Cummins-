@@ -1,7 +1,7 @@
 
 
 %%
-ax(1) = subplot(511)
+ax(1) = subplot(411)
 plot(time_200,Engine_Speed_200s,time_200,Cmd,time_200,Fdbk)
 hold on
 yyaxis right 
@@ -9,7 +9,7 @@ plot(time_200,Total_fueling)
 legend('Engine Speed','Command','Feedback','Total Fueling')
 xlim([ tstart tend])
 
-ax(2)=subplot(514)
+ax(2)=subplot(412)
 plot(time_1,Cycle,time_1,Pumping,'o')
 hold on
 line(time_1,21*ones(1,numel(time_1)))
@@ -28,7 +28,7 @@ xlim([ tstart tend])
 % legend('Valid Pressure drop flag','Test Cylinder number')
 % xlim([ tstart tend])
 
-ax(4)=subplot(513)
+ax(3)=subplot(413)
 plot(time_0,Residual,'o')
 ylim([ 0 120])
 hold on
@@ -38,7 +38,7 @@ legend('Residuals','Parasitic Leakage')
 xlim([ tstart tend])
 
 
-ax(5)=subplot(515)
+ax(4)=subplot(414)
 plot(time_200,PRV_cmd,time_200,PRV_fdbk,time_200,IMA_cmd,time_200,IMA_fdbk)
 ylim([ 1 2])
 yticks(1:0.2:2)
