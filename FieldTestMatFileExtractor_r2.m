@@ -79,9 +79,9 @@ figure(2)
 clf
 
 colorOrder = get(gca,'ColorOrder');
-for i = 1:2
+for i = 1:numel(Capability)
     subplot(2,2,1:2)
-    b = bar([Capability(i).Old_Mot,Capability(i).TimetoDec,Capability(i).New_Mot]);
+    b = bar([Capability(i).Old_Mot,Capability(i) .TimetoDec,Capability(i).New_Mot]);
     legend({'motoring time - old cal','motoring time until FED decision - old cal','motoring time - new cal'})
     grid on
 %     % set(gca,'XTickLabel',datestr(iupr_startTime))
@@ -93,7 +93,7 @@ for i = 1:2
     for j = 1:3
         b(j).FaceColor = colorOrder(j,:);
     end
-    
+%     
 %     subplot(2,2,3)
 %     hold on
 %     
@@ -103,12 +103,16 @@ for i = 1:2
 %         'Orientation','horizontal','ColorGroup',{'old cal','FED decision','new cal'},'Colors',colorOrder,'BoxStyle','filled')
 %     grid on
 %     xlabel('motoring time (s)')
-    
-    subplot(2,2,3:4)
+%     
+   subplot(2,2,3:4)
     bar([sum(~isnan(Capability(i).TimetoDec)),sum(Capability(i).New_Mot > Capability(i).TimetoDec)])
     set(gca,'XTickLabel',{'Key cycles w/ FED decisions - old cal','Key cycles w/ sufficient mot. time for FED - new cal'})
     grid on
-    pause
+    h = suptitle(Capability(i).Name); 
+    h.Interpreter = 'none';
+     pause
+    savefig(strcat('IUPR-',Capability(i).Name))
+    close(gcf)
     
 end
 
