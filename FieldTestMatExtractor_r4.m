@@ -2,7 +2,7 @@ function Capability = FieldTestMatExtractor_r4( TrucksDir,MainDir,CleanDatebegin
 %UNTITLED Summary of this function goes here
 %   Detailed explanation goes here
 
-    
+
 %S = dir(fullfile(TrucksDir{i}));
 i=1;
 cnt = 1;
@@ -23,70 +23,62 @@ for j = 1:numel(MAT)
     
     
     load(strcat(MAT(j).folder,'\',MAT(j).name),Params{:},'H_FED_q*')
-    if(Params_ind(44))
-        
+    
+    time{i,cnt} = PC_TStamp_Datenum.';
+    time_1s{i,cnt} = PC_TStamp_Datenum_1_Sec_Screen_2.';
+    time_10s{i,cnt} = PC_TStamp_Datenum_10_Sec.';
+    time_200s{i,cnt} = PC_TStamp_Datenum_200ms.';
+    %         MeanInjPrs{i,cnt} = IFM_hp_EOCMeanInjPressure_200ms.';
+    Residual{i,cnt} = IFM_hp_Residual.';
+    Leakage{i,cnt} = IFM_r_ParasiticLeakage.';
+    %         ValidDrop{i,cnt} = IFM_s_ValidPressureDrop_200ms.';
+    %         Coolant_Temp{i,cnt} = Coolant_Temperature_200ms.';
+    Pumping{i,cnt} = P_BPD_ct_IFMPumping_1_Sec_Screen_2.';
+    %         Leakage_IFM{i,cnt} =   P_BPD_ct_IFMLeakage_1_Sec_Screen_2.';
+    Cycle{i,cnt} = P_BPD_ct_IFMTotalCycle_1_Sec_Screen_2.';
+    Cmd{i,cnt} = APC_hp_Cmd_200ms.';
+    Fdbk{i,cnt} = APC_hp_Fdbk_200ms.';
+    Total_fueling{i,cnt} = Total_Fueling_200ms.';
+    Engine_Speed2{i,cnt} = Engine_Speed_1_Sec_Screen_2.';
+    Engine_Speed_1s{i,cnt} = Engine_Speed.';
+    Engine_Speed200ms{i,cnt} = Engine_Speed_200ms.';
+    %         Mot_flag{i,cnt} = CBM_Mot_Flag_200ms.';
+    %         EstFuel{i,cnt} = IFM_q_EOCEstFueling_200ms.';
+    %         TestCylNum{i,cnt} = IFM_ct_EOCTestCylNum_200ms.';
+    %         CCPO{i,cnt} = Combustion_Control_Path_Owner_200ms.';
+    %         Gear{i,cnt} = CANC_Current_Gear_200ms.';
+    %         ENGState{i,cnt} = Current_Engine_State_200ms.';
+    %         DLAtime{i,cnt} = DLA_Timestamp.';
+    %         DLAtime_1s{i,cnt} = DLA_Timestamp_1_Sec_Screen_2.';
+    %         DLAtime_10s{i,cnt} = DLA_Timestamp_10_Sec.';
+    %         DLAtime_200s{i,cnt} = DLA_Timestamp_200ms.';
+    PRV_cmd{i,cnt} = PRV_i_Cmd_200ms.';
+    PRV_fdbk{i,cnt} = PRV_i_Fdbk_200ms.';
+    %         APC_qr{i,cnt} = APC_qr_Cmd_200ms.';
+    IMA_cmd{i,cnt} = H_IMA_i_Cmd_200ms.';
+    IMA_fdbk{i,cnt} = H_IMA_i_Fltr_200ms.';
+    SetPump{i,cnt} = P_BPD_ct_SetIfmPumpErr_10_Sec.';
+    KeyCycles{i,cnt} = OBD_Number_Of_Key_Cycles_10_Sec.';
+    VehSpeed{i,cnt} = Vehicle_Speed_200ms.';
+    if ismember('H_FED_q_CylAveFuelingErrors0_10_Sec',listOfVariables)
         for k = 1:6
             CylAve{k,cnt} = eval(['H_FED_q_CylAveFuelingErrors',int2str(k-1),'_10_Sec']).';
         end
-         NoDecisions = 0;
-    elseif(Params_ind(45))
+        FedTime{i,cnt} = PC_TStamp_Datenum_10_Sec.';
+    elseif ismember('H_FED_q_CylAveFuelingErrors0_200ms',listOfVariables)
         for k = 1:6
             CylAve{k,cnt} = eval(['H_FED_q_CylAveFuelingErrors',int2str(k-1),'_200ms']).';
         end
-         NoDecisions = 0;
-    else
-        NoDecisions = 1;
+        FedTime{i,cnt} = PC_TStamp_Datenum_200ms.';
     end
+    %
     
-    if(~NoDecisions)
-        
-        time{i,cnt} = PC_TStamp_Datenum.';
-        time_1s{i,cnt} = PC_TStamp_Datenum_1_Sec_Screen_2.';
-        time_10s{i,cnt} = PC_TStamp_Datenum_10_Sec.';
-        time_200s{i,cnt} = PC_TStamp_Datenum_200ms.';
-        %         MeanInjPrs{i,cnt} = IFM_hp_EOCMeanInjPressure_200ms.';
-        Residual{i,cnt} = IFM_hp_Residual.';
-        Leakage{i,cnt} = IFM_r_ParasiticLeakage.';
-        %         ValidDrop{i,cnt} = IFM_s_ValidPressureDrop_200ms.';
-        %         Coolant_Temp{i,cnt} = Coolant_Temperature_200ms.';
-        Pumping{i,cnt} = P_BPD_ct_IFMPumping_1_Sec_Screen_2.';
-        %         Leakage_IFM{i,cnt} =   P_BPD_ct_IFMLeakage_1_Sec_Screen_2.';
-        Cycle{i,cnt} = P_BPD_ct_IFMTotalCycle_1_Sec_Screen_2.';
-        Cmd{i,cnt} = APC_hp_Cmd_200ms.';
-        Fdbk{i,cnt} = APC_hp_Fdbk_200ms.';
-        Total_fueling{i,cnt} = Total_Fueling_200ms.';
-        Engine_Speed2{i,cnt} = Engine_Speed_1_Sec_Screen_2.';
-        Engine_Speed_1s{i,cnt} = Engine_Speed.';
-        Engine_Speed200ms{i,cnt} = Engine_Speed_200ms.';
-        %         Mot_flag{i,cnt} = CBM_Mot_Flag_200ms.';
-        %         EstFuel{i,cnt} = IFM_q_EOCEstFueling_200ms.';
-        %         TestCylNum{i,cnt} = IFM_ct_EOCTestCylNum_200ms.';
-        %         CCPO{i,cnt} = Combustion_Control_Path_Owner_200ms.';
-        %         Gear{i,cnt} = CANC_Current_Gear_200ms.';
-        %         ENGState{i,cnt} = Current_Engine_State_200ms.';
-        %         DLAtime{i,cnt} = DLA_Timestamp.';
-        %         DLAtime_1s{i,cnt} = DLA_Timestamp_1_Sec_Screen_2.';
-        %         DLAtime_10s{i,cnt} = DLA_Timestamp_10_Sec.';
-        %         DLAtime_200s{i,cnt} = DLA_Timestamp_200ms.';
-        PRV_cmd{i,cnt} = PRV_i_Cmd_200ms.';
-        PRV_fdbk{i,cnt} = PRV_i_Fdbk_200ms.';
-        %         APC_qr{i,cnt} = APC_qr_Cmd_200ms.';
-        IMA_cmd{i,cnt} = H_IMA_i_Cmd_200ms.';
-        IMA_fdbk{i,cnt} = H_IMA_i_Fltr_200ms.';
-        SetPump{i,cnt} = P_BPD_ct_SetIfmPumpErr_10_Sec.';
-        KeyCycles{i,cnt} = OBD_Number_Of_Key_Cycles_10_Sec.';
-        VehSpeed{i,cnt} = Vehicle_Speed_200ms.';
-        %
-        
-        %         DosingFuel{i,cnt} = P_FED_q_DosingFuelAdj_10_Sec.';
-        %         CompensationOntime{i,cnt} = P_FED_ti_AveOntimeErrorBias.';
-        %         CompensationFuel{i,cnt}= P_FED_q_AveFuelingErrorBias.';
-        cnt = cnt+1;
-    end
-    
-    
-    
+    %         DosingFuel{i,cnt} = P_FED_q_DosingFuelAdj_10_Sec.';
+    %         CompensationOntime{i,cnt} = P_FED_ti_AveOntimeErrorBias.';
+    %         CompensationFuel{i,cnt}= P_FED_q_AveFuelingErrorBias.';
+    cnt = cnt+1;
 end
+
 
 cd(MainDir)
 
@@ -130,6 +122,7 @@ IMA_fdbk = cat(2,IMA_fdbk{:});
 SetPump = cat(2,SetPump{:});
 KeyCycles = cat(2,KeyCycles{:});
 VehSpeed = cat(2,VehSpeed{:});
+FedTime = cat(2,FedTime{:});
 
 CylAvgs = [];
 for k = 1:6
@@ -309,16 +302,16 @@ for j = 1:length(iupr_keyCycle)
     cycFuel = Total_fueling(inds200ms);
     cycVehSpd = VehSpeed(inds200ms);
     
-    inds10s = iupr_startTime(j) <= time_10s & time_10s <= iupr_endTime(j);
-    cycTime10s = time_10s(inds10s);
-    cycCylAvgs = CylAvgs(:,inds10s);
+    indsFed = iupr_startTime(j) <= FedTime & FedTime <= iupr_endTime(j);
+    cycTimeFed = FedTime(indsFed);
+    cycCylAvgs = CylAvgs(:,indsFed);
     
     % find when FED made a decision (if it did)
     efiDecisionInd = find(all(cycCylAvgs ~= 0,1) & all(cycCylAvgs ~= cycCylAvgs(:,1),1),1,'first');
     if isempty(efiDecisionInd)
         efiDecisionTime = nan;
     else
-        efiDecisionTime = cycTime10s(efiDecisionInd);
+        efiDecisionTime = cycTimeFed(efiDecisionInd);
     end
     
     % look for motoring events
@@ -372,6 +365,7 @@ for j = 1:length(iupr_keyCycle)
     
 end
 
+%% Structs 
 % iupr_startTime = Timestamp(iupr_startTime,0);
 % iupr_endTime = Timestamp(iupr_endTime,0);
 
@@ -383,10 +377,11 @@ cd(strcat(MainDir,'\',NewFolder))
 
 Capability = struct('Old_TimeAxis',capability_oldcal_datetime,'Old_PumpingCnts',capability_oldcal_counter,... 
     'New_TimeAxis',capability_newcal_datetime,'New_PumpingCnts',capability_newcal_counter,...
-    'Old_Mot',iupr_oldCalMotTime,'New_Mot',iupr_newCalMotTime,'TimetoDec',iupr_MotTimeToFedDec,'Name',MAT(1).name(1:10))
+    'Old_Mot',iupr_oldCalMotTime,'New_Mot',iupr_newCalMotTime,'TimetoDec',iupr_MotTimeToFedDec,'KeyCycles',iupr_keyCycle,'Name',MAT(1).name(1:10))
 
 
 addpath('C:\Users\pb875\OneDrive - Cummins\Programs\Scripts') 
+
 %% Entering the plot section
 % time_40s = Timestamp(time_10s,0).';
 % time_1 = Timestamp(time_1s,0);

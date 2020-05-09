@@ -2,7 +2,7 @@ function Capability = FieldTestMatExtractor_r4( TrucksDir,MainDir,CleanDatebegin
 %UNTITLED Summary of this function goes here
 %   Detailed explanation goes here
 
-    
+
 %S = dir(fullfile(TrucksDir{i}));
 i=1;
 cnt = 1;
@@ -12,6 +12,7 @@ cd(Dir);
 MAT = dir('**/*.mat');
 MAT = MAT(find(([MAT.datenum]>=CleanDatebegin & [MAT.datenum]<CleanDateEnd)));
 CylAve = {};
+NoDecisions =0;
 
 %% Assign data from each matfile into a variable
 for j = 1:numel(MAT)
@@ -22,20 +23,6 @@ for j = 1:numel(MAT)
     
     
     load(strcat(MAT(j).folder,'\',MAT(j).name),Params{:},'H_FED_q*')
-    if(Params_ind(44))
-        
-        for k = 1:6
-            CylAve{k,cnt} = eval(['H_FED_q_CylAveFuelingErrors',int2str(k-1),'_10_Sec']).';
-            
-        end
-    else if(Params_ind(44))
-        for k = 1:6
-            CylAve{k,cnt} = eval(['H_FED_q_CylAveFuelingErrors',int2str(k-1),'_200ms']).';
-            
-        end
-    end
-    
-    
     
     time{i,cnt} = PC_TStamp_Datenum.';
     time_1s{i,cnt} = PC_TStamp_Datenum_1_Sec_Screen_2.';
@@ -73,16 +60,25 @@ for j = 1:numel(MAT)
     SetPump{i,cnt} = P_BPD_ct_SetIfmPumpErr_10_Sec.';
     KeyCycles{i,cnt} = OBD_Number_Of_Key_Cycles_10_Sec.';
     VehSpeed{i,cnt} = Vehicle_Speed_200ms.';
+    if ismember('H_FED_q_CylAveFuelingErrors0_10_Sec',listOfVariables)
+        for k = 1:6
+            CylAve{k,cnt} = eval(['H_FED_q_CylAveFuelingErrors',int2str(k-1),'_10_Sec']).';
+        end
+        FedTime{i,cnt} = PC_TStamp_Datenum_10_Sec.';
+    elseif ismember('H_FED_q_CylAveFuelingErrors0_200ms',listOfVariables)
+        for k = 1:6
+            CylAve{k,cnt} = eval(['H_FED_q_CylAveFuelingErrors',int2str(k-1),'_200ms']).';
+        end
+        FedTime{i,cnt} = PC_TStamp_Datenum_200ms.';
+    end
     %
     
     %         DosingFuel{i,cnt} = P_FED_q_DosingFuelAdj_10_Sec.';
     %         CompensationOntime{i,cnt} = P_FED_ti_AveOntimeErrorBias.';
     %         CompensationFuel{i,cnt}= P_FED_q_AveFuelingErrorBias.';
     cnt = cnt+1;
-    
-    
-    
 end
+
 
 cd(MainDir)
 
@@ -126,6 +122,7 @@ IMA_fdbk = cat(2,IMA_fdbk{:});
 SetPump = cat(2,SetPump{:});
 KeyCycles = cat(2,KeyCycles{:});
 VehSpeed = cat(2,VehSpeed{:});
+FedTime = cat(2,FedTime{:});
 
 CylAvgs = [];
 for k = 1:6
@@ -305,16 +302,16 @@ for j = 1:length(iupr_keyCycle)
     cycFuel = Total_fueling(inds200ms);
     cycVehSpd = VehSpeed(inds200ms);
     
-    inds10s = iupr_startTime(j) <= time_10s & time_10s <= iupr_endTime(j);
-    cycTime10s = time_10s(inds10s);
-    cycCylAvgs = CylAvgs(:,inds10s);
+    indsFed = iupr_startTime(j) <= FedTime & FedTime <= iupr_endTime(j);
+    cycTimeFed = FedTime(indsFed);
+    cycCylAvgs = CylAvgs(:,indsFed);
     
     % find when FED made a decision (if it did)
     efiDecisionInd = find(all(cycCylAvgs ~= 0,1) & all(cycCylAvgs ~= cycCylAvgs(:,1),1),1,'first');
     if isempty(efiDecisionInd)
         efiDecisionTime = nan;
     else
-        efiDecisionTime = cycTime10s(efiDecisionInd);
+        efiDecisionTime = cycTimeFed(efiDecisionInd);
     end
     
     % look for motoring events
@@ -368,6 +365,7 @@ for j = 1:length(iupr_keyCycle)
     
 end
 
+%% Structs 
 % iupr_startTime = Timestamp(iupr_startTime,0);
 % iupr_endTime = Timestamp(iupr_endTime,0);
 
@@ -379,10 +377,11 @@ cd(strcat(MainDir,'\',NewFolder))
 
 Capability = struct('Old_TimeAxis',capability_oldcal_datetime,'Old_PumpingCnts',capability_oldcal_counter,... 
     'New_TimeAxis',capability_newcal_datetime,'New_PumpingCnts',capability_newcal_counter,...
-    'Old_Mot',iupr_oldCalMotTime,'New_Mot',iupr_newCalMotTime,'TimetoDec',iupr_MotTimeToFedDec,'Name',MAT(1).name(1:10))
+    'Old_Mot',iupr_oldCalMotTime,'New_Mot',iupr_newCalMotTime,'TimetoDec',iupr_MotTimeToFedDec,'KeyCycles',iupr_keyCycle,'Name',MAT(1).name(1:10))
 
 
 addpath('C:\Users\pb875\OneDrive - Cummins\Programs\Scripts') 
+
 %% Entering the plot section
 % time_40s = Timestamp(time_10s,0).';
 % time_1 = Timestamp(time_1s,0);

@@ -3,7 +3,7 @@ clc;clear all
 tic
 MainDir = {'C:\Users\pb875\Desktop\RandomDesktopStuff\CDAT\Chrysler\Symmetric'};
 Subdir = dir(MainDir{:});
-Subdir = Subdir(contains({Subdir.name},{'VSO','VHO'}));
+Subdir = Subdir(contains({Subdir.name},{'VSO','VHO','Thunderbolt'}));
 
 
 d1 = '2020-1-1 6:00:00';
@@ -15,6 +15,8 @@ tend = t1;
 CleanDate1 = datenum(t);
 CleanDate2 = datenum(t1);
 
+
+addpath('C:\Users\pb875\OneDrive - Cummins\Programs\Scripts')
 Params = ReadParams('C:\Users\pb875\OneDrive - Cummins\Programs\Scripts\UsefulOverlays_FiltFiles\FieldTest_Parameters_Chrysler.txt');
 cnt = 1;
 for j = 1:numel(Subdir)
@@ -30,50 +32,51 @@ for j = 1:numel(Subdir)
         
     end
 end
-
-%% Capability plots 
 toc
-save workspace
-% %% plot AFS
-h =figure(1)
-clf
 
-
-for i = 1:numel(Capability)
-    
-    a=subplot(2,1,1)
-    plot(a,Capability(i).Old_TimeAxis,Capability(i).Old_PumpingCnts,'o','displayname','old cal')
-    grid on
-   hold on
-    
-    
-    a1=subplot(2,1,2)
-    plot(a1,Capability(i).New_TimeAxis,Capability(i).New_PumpingCnts,'s','displayname','new cal')
-    hold on
-    grid on
-    
-    %     ylabel('sim P_BPD_ct_IFMPumping (batch max)','Interpreter','none')
-    %
-    %     h1 = subplot(2,1,2)
-    %     hold on
-    %     histogram(Capability(i).Old_PumpingCnts,'Normalization','probability','DisplayName',sprintf('old cal (n = %d)',length(Capability(i).Old_PumpingCnts)))
-    %     histogram(Capability(i).New_PumpingCnts,'Normalization','probability','DisplayName',sprintf('new cal (n = %d)',length(Capability(i).New_PumpingCnts)))
-    %     legend show
-    %     grid on
-    %     ylabel('density (%)')
-    
-end
-
-plot(a,xticks,21*ones(1,numel(xticks)),'r--')
-plot(a1,xticks,21*ones(1,numel(xticks)),'r--')
-legend(a1,{Capability(:).Name,'Threshold'},'Interpreter','none')
-title(a,'BPD error counter without step 3 fix')
-legend(a,{Capability(:).Name,'Threshold'},'Interpreter','none')
-title(a1,'BPD error counter with step 3 fix')
-ylabel(a1,'Error Counter')
-ylabel(a,'Error Counter')
+% %% Capability plots 
 % toc
+save workspace
+% % %% plot AFS
+% h =figure(1)
+% clf
 % 
+% 
+% for i = 1:numel(Capability)
+%     
+%     a=subplot(2,1,1)
+%     plot(a,Capability(i).Old_TimeAxis,Capability(i).Old_PumpingCnts,'o','displayname','old cal')
+%     grid on
+%    hold on
+%     
+%     
+%     a1=subplot(2,1,2)
+%     plot(a1,Capability(i).New_TimeAxis,Capability(i).New_PumpingCnts,'s','displayname','new cal')
+%     hold on
+%     grid on
+%     
+%     %     ylabel('sim P_BPD_ct_IFMPumping (batch max)','Interpreter','none')
+%     %
+%     %     h1 = subplot(2,1,2)
+%     %     hold on
+%     %     histogram(Capability(i).Old_PumpingCnts,'Normalization','probability','DisplayName',sprintf('old cal (n = %d)',length(Capability(i).Old_PumpingCnts)))
+%     %     histogram(Capability(i).New_PumpingCnts,'Normalization','probability','DisplayName',sprintf('new cal (n = %d)',length(Capability(i).New_PumpingCnts)))
+%     %     legend show
+%     %     grid on
+%     %     ylabel('density (%)')
+%     
+% end
+% 
+% plot(a,xticks,21*ones(1,numel(xticks)),'r--')
+% plot(a1,xticks,21*ones(1,numel(xticks)),'r--')
+% legend(a1,{Capability(:).Name,'Threshold'},'Interpreter','none')
+% title(a,'BPD error counter without step 3 fix')
+% legend(a,{Capability(:).Name,'Threshold'},'Interpreter','none')
+% title(a1,'BPD error counter with step 3 fix')
+% ylabel(a1,'Error Counter')
+% ylabel(a,'Error Counter')
+% % toc
+% % 
 %% plot AFS
 figure(2)
 clf
@@ -105,7 +108,7 @@ for i = 1:numel(Capability)
 %     xlabel('motoring time (s)')
 %     
    subplot(2,2,3:4)
-    bar([sum(~isnan(Capability(i).TimetoDec)),sum(Capability(i).New_Mot > Capability(i).TimetoDec)])
+    bar([size(Capability(i).KeyCycles,1),sum(~isnan(Capability(i).TimetoDec)),sum(Capability(i).New_Mot > Capability(i).TimetoDec)])
     set(gca,'XTickLabel',{'Key cycles w/ FED decisions - old cal','Key cycles w/ sufficient mot. time for FED - new cal'})
     grid on
     h = suptitle(Capability(i).Name); 
@@ -115,5 +118,5 @@ for i = 1:numel(Capability)
     close(gcf)
     
 end
-
-         
+% 
+%          
