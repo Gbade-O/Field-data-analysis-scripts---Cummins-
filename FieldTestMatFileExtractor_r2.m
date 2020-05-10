@@ -1,12 +1,12 @@
 %% FED Field test data processing script 
 clc;clear all
 tic
-MainDir = {'C:\Users\pb875\Desktop\RandomDesktopStuff\CDAT\Chrysler\Symmetric'};
+MainDir = {'C:\Users\pb875\Desktop\RandomDesktopStuff\CDAT\Chrysler\Asymmetric'};
 Subdir = dir(MainDir{:});
-Subdir = Subdir(contains({Subdir.name},{'VSO','VHO','Thunderbolt'}));
+Subdir = Subdir(contains({Subdir.name},{'Thunderbolt'}));
 
 
-d1 = '2020-1-1 6:00:00';
+d1 = '2018-12-1 6:00:00';
 d2 = '2020-04-30 23:00:00';
 t = datetime(d1,'InputFormat','yyyy-MM-dd HH:mm:ss')
 t1 = datetime(d2,'InputFormat','yyyy-MM-dd HH:mm:ss')
