@@ -10,12 +10,12 @@ legend('Engine Speed','Command','Feedback','Total Fueling')
 xlim([ tstart tend])
 
 ax(2)=subplot(514)
-plot(time_1,Cycle,time_1,Pumping,'o',time_1,Leakage_IFM)
+plot(time_1,Cycle,time_1,Pumping,'o')
 hold on
 line(time_1,21*ones(1,numel(time_1)))
 xlabel('Time -s')
 ylabel('Counts')
-title(sprintf('%s, BPD Pumping counts from %s to %s',MAT(1).name(1:5),tstart,tend))
+title(sprintf('%s, BPD Pumping counts from %s to %s',MAT(1).name(1:10),tstart,tend))
 legend('P BPD ct IFMTotalCycle', 'P BPD ct IFMPumping','Leakage','Threshold')
 xlim([ tstart tend])
 
@@ -30,7 +30,7 @@ xlim([ tstart tend])
 
 ax(4)=subplot(513)
 plot(time_200,Residual,'o')
-ylim([ 0 65])
+ylim([ 0 120])
 hold on
 yyaxis right 
 plot(time_200,Leakage)

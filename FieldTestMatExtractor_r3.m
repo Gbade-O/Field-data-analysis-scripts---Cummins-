@@ -55,9 +55,16 @@ for j = 1:numel(MAT)
         IMA_fdbk{i,cnt} = H_IMA_i_Fltr_200ms.';
         SetPump{i,cnt} = P_BPD_ct_SetIfmPumpErr_10_Sec.';
 
-        for k = 1:6
-            CylAve{k,cnt} = eval(['H_FED_q_CylAveFuelingErrors',int2str(k-1),'_10_Sec']).';
-            
+         if ismember('H_FED_q_CylAveFuelingErrors0_10_Sec',listOfVariables)
+            for k = 1:6
+                CylAve{k,cnt} = eval(['H_FED_q_CylAveFuelingErrors',int2str(k-1),'_10_Sec']).';
+            end
+            FedTime{i,cnt} = PC_TStamp_Datenum_10_Sec.';
+        elseif ismember('H_FED_q_CylAveFuelingErrors0_200ms',listOfVariables)
+            for k = 1:6
+                CylAve{k,cnt} = eval(['H_FED_q_CylAveFuelingErrors',int2str(k-1),'_200ms']).';
+            end
+            FedTime{i,cnt} = PC_TStamp_Datenum_200ms.';
         end
         DosingFuel{i,cnt} = P_FED_q_DosingFuelAdj_10_Sec.';
         CompensationOntime{i,cnt} = P_FED_ti_AveOntimeErrorBias.';
@@ -106,6 +113,7 @@ APC_qr= cat(2,APC_qr{:});
 IMA_cmd = cat(2,IMA_cmd{:});
 IMA_fdbk = cat(2,IMA_fdbk{:});
 SetPump = cat(2,SetPump{:});
+FedTime= cat(2,FedTime{:});
 
 
 
@@ -116,6 +124,7 @@ time_40s = Timestamp(time_10s,0).';
 time_1 = Timestamp(time_1s,0);
 time_200 = Timestamp(time_200s,0);
 time_0 = Timestamp(time,0);
+FedTime=  Timestamp(FedTime,0);
 
 NewFolder = strcat('Capability-',datestr(datetime('today')));
 mkdir(MainDir,NewFolder)
@@ -173,7 +182,7 @@ for i = 1:6
             cnt = cnt +1;
         end
     end
-    plot(time_40s,Cyl(1:length(time_40s)),strcat(Color_Vec(i),'o'))
+    plot(FedTime,Cyl(1:length(FedTime)),strcat(Color_Vec(i),'o'))
     hold on
 end
 xlim([tstart tend])
@@ -183,7 +192,7 @@ ylabel('FED Decisions (mg/strk)')
 title('FED Decisions vs Time')
 legend('Cyl1','Cyl2','Cyl3','Cyl4','Cyl5','Cyl6')
 hold off
-suptitle(sprintf('%s, from %s to %s',MAT(1).name(1:5),tstart,tend))
+suptitle(sprintf('%s, from %s to %s',MAT(1).name(1:10),tstart,tend))
 
 ag(2)=subplot(312)
 plot(time_200,Coolant);
@@ -249,7 +258,7 @@ for i = 1:6
 end
 xlabel('FED Decisions(mg/strk)')
 ylabel('Frequency')
-suptitle(sprintf('%s, from %s to %s',MAT(1).name(1:5),tstart,tend))
+suptitle(sprintf('%s, from %s to %s',MAT(1).name(1:10),tstart,tend))
 savefig(strcat(MainDir,'\',NewFolder,'\','CylDistribution.fig'))
 close(gcf)
 
@@ -286,7 +295,7 @@ for i = 1:6
 end
 
 
-suptitle(sprintf('%s, from %s to %s',MAT(1).name(1:5),tstart,tend))
+suptitle(sprintf('%s, from %s to %s',MAT(1).name(1:10),tstart,tend))
 linkaxes(ay,'x','y');
 savefig(strcat(MainDir,'\',NewFolder,'\','EstFuelvsMeanInjPrs.fig'))
 close(gcf)
@@ -301,6 +310,7 @@ for j = 1:length(Residual)-1
         cnt = cnt +1;
     end
 end
+
 subplot(211)
 plot(Engine_Speed_1s(unique_idx),Residual(unique_idx),'o')
 hold on
@@ -327,7 +337,7 @@ ylabel('Frequency')
 xlim([ -20 80])
 title('Histogram of Residuals')
 legend('Residuals','Residual Threshold')
-suptitle(sprintf('%s, from %s to %s',MAT(1).name(1:5),tstart,tend))
+suptitle(sprintf('%s, from %s to %s',MAT(1).name(1:10),tstart,tend))
 
 savefig(strcat(MainDir,'\',NewFolder,'\','ResidualsVsEngineSpeed.fig'))
 close(gcf)
@@ -339,7 +349,7 @@ hold on
 line(time_1,21*ones(1,numel(time_1)))
 xlabel('Time -s')
 ylabel('Counts')
-title(sprintf('%s, BPD Pumping counts from %s to %s',MAT(1).name(1:5),tstart,tend))
+title(sprintf('%s, BPD Pumping counts from %s to %s',MAT(1).name(1:10),tstart,tend))
 legend('Set BPD fault','P BPD ct IFMTotalCycle', 'P BPD ct IFMPumping','Threshold')
 savefig(strcat(MainDir,'\',NewFolder,'\','BPDPLot.fig'))
 close(gcf)
@@ -377,7 +387,7 @@ legend('Cyl1','Cyl2','Cyl3','Cyl4','Cyl5','Cyl6','Commanded Fueling','MeanInjPrs
 
 
 
-suptitle(sprintf('%s, from %s to %s',MAT(1).name(1:5),tstart,tend))
+suptitle(sprintf('%s, from %s to %s',MAT(1).name(1:10),tstart,tend))
 savefig(strcat(MainDir,'\',NewFolder,'\','EstFuelvsMeanInjPrs_r2.fig'))
 close(gcf)
 

@@ -1,30 +1,31 @@
 %% FED Field test data processing script 
 clc;clear all
 
-MainDir = {'C:\Users\pb875\Desktop\RandomDesktopStuff\CDAT\Chrysler\Temp Data'};
+MainDir = {'C:\Users\pb875\Desktop\RandomDesktopStuff\CDAT\Chrysler\Symmetric'};
 Subdir = dir(MainDir{:});
 Subdir = Subdir(contains({Subdir.name},{'VHO','VSO'}));
 
 
-d1 = '2020-04-28 6:00:00';
-d2 = '2020-05-6 23:00:00';
+d1 = '2020-5-4 6:00:00';
+d2 = '2020-5-7 6:00:00';
 t = datetime(d1,'InputFormat','yyyy-MM-dd HH:mm:ss')
 t1 = datetime(d2,'InputFormat','yyyy-MM-dd HH:mm:ss')
-tstart =t;
+tstart = t;
 tend = t1;
 CleanDate1 = datenum(t);
 CleanDate2 = datenum(t1);
-
+TruckfolderOverride = 'C:\Users\pb875\Desktop\RandomDesktopStuff\CDAT\Chrysler\Temp Data\Thunderbolt\T4066';
 Params = ReadParams('C:\Users\pb875\OneDrive - Cummins\Programs\Scripts\UsefulOverlays_FiltFiles\FieldTest_Parameters_Chrysler.txt');
 cnt = 1;
 for j = 1:numel(Subdir)
     
-    Truckfolders = dir(strcat(Subdir(j).folder,'\',Subdir(j).name,'\T*'));
+%     Truckfolders = dir(strcat(Subdir(j).folder,'\',Subdir(j).name,'\T*'));
+      Truckfolders = dir(strcat(Subdir(j).folder,'\',Subdir(j).name,'\T*'));
     
     for k = 1:numel(Truckfolders)
         cd('C:\Users\pb875\OneDrive - Cummins\Programs\Scripts')
-        DataDir = strcat(strcat('C:\Users\pb875\Desktop\RandomDesktopStuff\CDAT\Chrysler\Temp Data\VHO\T6211','\Matfiles')); %% Where the matfiles are saved
-        SaveDir = strcat(strcat('C:\Users\pb875\Desktop\RandomDesktopStuff\CDAT\Chrysler\Temp Data\VHO\T6211')); %%Location to save plots and workspace
+        DataDir = strcat(strcat(TruckfolderOverride,'\Matfiles')); %% Where the matfiles are saved
+        SaveDir = strcat(TruckfolderOverride); %%Location to save plots and workspace
         FieldTestMatExtractor_r3(DataDir,SaveDir,CleanDate1,CleanDate2,Params,tstart,tend);
         cnt =cnt+1;
         
