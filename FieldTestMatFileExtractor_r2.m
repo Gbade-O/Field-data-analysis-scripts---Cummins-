@@ -1,13 +1,13 @@
 %% FED Field test data processing script 
 clc;clear all
 
-MainDir = {'C:\Users\pb875\Desktop\RandomDesktopStuff\CDAT\Chrysler\Symmetric'};
+MainDir = {'C:\Users\pb875\Desktop\RandomDesktopStuff\CDAT\Chrysler\Asymmetric'};
 Subdir = dir(MainDir{:});
-Subdir = Subdir(contains({Subdir.name},{'VHO','VSO'}));
+Subdir = Subdir(contains({Subdir.name},{'Thunderbolt'}));
 
 
-d1 = '2020-5-4 6:00:00';
-d2 = '2020-5-10 6:00:00';
+d1 = '2018-12-1 6:00:00';
+d2 = '2019-8-1 6:00:00';
 t = datetime(d1,'InputFormat','yyyy-MM-dd HH:mm:ss')
 t1 = datetime(d2,'InputFormat','yyyy-MM-dd HH:mm:ss')
 tstart = t;
@@ -24,13 +24,16 @@ TruckfolderOverride = 'C:\Users\pb875\Desktop\RandomDesktopStuff\CDAT\Chrysler\T
 
 for j = 1:numel(Subdir)
     
-%     Truckfolders = dir(strcat(Subdir(j).folder,'\',Subdir(j).name,'\T*'));
-      Truckfolders = dir(strcat(Subdir(j).folder,'\',Subdir(j).name,'\T*'));
+    %     Truckfolders = dir(strcat(Subdir(j).folder,'\',Subdir(j).name,'\T*'));
+    Truckfolders = dir(strcat(Subdir(j).folder,'\',Subdir(j).name,'\T*'));
     
     for k = 1:numel(Truckfolders)
         cd('C:\Users\pb875\Documents\GitHub\Scripts')
-        DataDir = strcat(strcat(TruckfolderOverride,'\Matfiles')); %% Where the matfiles are saved
-        SaveDir = strcat(TruckfolderOverride); %%Location to save plots and workspace
+        %Override folder structure
+        %         DataDir = strcat(strcat(TruckfolderOverride,'\Matfiles')); %% Where the matfiles are saved
+        %         SaveDir = strcat(TruckfolderOverride); %%Location to save plots and workspace
+        DataDir = strcat(strcat(Truckfolders(k).folder,'\',Truckfolders(k).name,'\Matfiles')); %% Where the matfiles are saved
+        SaveDir = strcat(Truckfolders(k).folder,'\',Truckfolders(k).name); %%Location to save plots and workspace
         FieldTestMatExtractor_r3(DataDir,SaveDir,CleanDate1,CleanDate2,Params,tstart,tend);
         cnt =cnt+1;
         

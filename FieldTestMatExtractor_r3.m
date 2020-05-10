@@ -175,6 +175,9 @@ save workspace
 % % time_40s = time_40s(1:axislength);
 % fix = find( ~(time_40s > datetime(2020,03,22,23,59,00)));
 % 
+
+tstart = MAT(1).date;
+tend =MAT(end).date;
 Color_Vec = [ 'k', 'g' ,'b', 'm', 'r','c'];
 max_fuel =0;
 min_fuel =0;
