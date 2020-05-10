@@ -37,46 +37,46 @@ toc
 % %% Capability plots 
 % toc
 save workspace
-% % %% plot AFS
-% h =figure(1)
-% clf
+% %% plot AFS
+h =figure(1)
+clf
+
+
+for i = 1:numel(Capability)
+    
+    a=subplot(2,1,1)
+    plot(a,Capability(i).Old_TimeAxis,Capability(i).Old_PumpingCnts,'o','displayname','old cal')
+    grid on
+   hold on
+    
+    
+    a1=subplot(2,1,2)
+    plot(a1,Capability(i).New_TimeAxis,Capability(i).New_PumpingCnts,'s','displayname','new cal')
+    hold on
+    grid on
+    
+    %     ylabel('sim P_BPD_ct_IFMPumping (batch max)','Interpreter','none')
+    %
+    %     h1 = subplot(2,1,2)
+    %     hold on
+    %     histogram(Capability(i).Old_PumpingCnts,'Normalization','probability','DisplayName',sprintf('old cal (n = %d)',length(Capability(i).Old_PumpingCnts)))
+    %     histogram(Capability(i).New_PumpingCnts,'Normalization','probability','DisplayName',sprintf('new cal (n = %d)',length(Capability(i).New_PumpingCnts)))
+    %     legend show
+    %     grid on
+    %     ylabel('density (%)')
+    
+end
+
+plot(a,xticks,21*ones(1,numel(xticks)),'r--')
+plot(a1,xticks,21*ones(1,numel(xticks)),'r--')
+legend(a1,{Capability(:).Name,'Threshold'},'Interpreter','none')
+title(a,'BPD error counter without step 3 fix')
+legend(a,{Capability(:).Name,'Threshold'},'Interpreter','none')
+title(a1,'BPD error counter with step 3 fix')
+ylabel(a1,'Error Counter')
+ylabel(a,'Error Counter')
+% toc
 % 
-% 
-% for i = 1:numel(Capability)
-%     
-%     a=subplot(2,1,1)
-%     plot(a,Capability(i).Old_TimeAxis,Capability(i).Old_PumpingCnts,'o','displayname','old cal')
-%     grid on
-%    hold on
-%     
-%     
-%     a1=subplot(2,1,2)
-%     plot(a1,Capability(i).New_TimeAxis,Capability(i).New_PumpingCnts,'s','displayname','new cal')
-%     hold on
-%     grid on
-%     
-%     %     ylabel('sim P_BPD_ct_IFMPumping (batch max)','Interpreter','none')
-%     %
-%     %     h1 = subplot(2,1,2)
-%     %     hold on
-%     %     histogram(Capability(i).Old_PumpingCnts,'Normalization','probability','DisplayName',sprintf('old cal (n = %d)',length(Capability(i).Old_PumpingCnts)))
-%     %     histogram(Capability(i).New_PumpingCnts,'Normalization','probability','DisplayName',sprintf('new cal (n = %d)',length(Capability(i).New_PumpingCnts)))
-%     %     legend show
-%     %     grid on
-%     %     ylabel('density (%)')
-%     
-% end
-% 
-% plot(a,xticks,21*ones(1,numel(xticks)),'r--')
-% plot(a1,xticks,21*ones(1,numel(xticks)),'r--')
-% legend(a1,{Capability(:).Name,'Threshold'},'Interpreter','none')
-% title(a,'BPD error counter without step 3 fix')
-% legend(a,{Capability(:).Name,'Threshold'},'Interpreter','none')
-% title(a1,'BPD error counter with step 3 fix')
-% ylabel(a1,'Error Counter')
-% ylabel(a,'Error Counter')
-% % toc
-% % 
 %% plot AFS
 figure(2)
 clf
