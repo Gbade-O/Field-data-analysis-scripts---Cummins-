@@ -134,7 +134,7 @@ end
 
 
 subplot(2,1,1)
-b = bar([iupr_old]);
+b = bar([iupr_old])
 grid on
 set(gca,'XTickLabel',{Capability.Name})
 set(gca,'TickLabelInterpreter','none')
@@ -142,12 +142,16 @@ xlabel('Field Test Trucks')
 ylabel('IUPR Estimate')
 title('Base V2b calibration')
 
-for j = 1:numel(b)
-    b(j).FaceColor = colorOrder(j,:);
-end
+   for l = 1:numel(b.XData)
+        xtips1 = b.XData(l);
+        ytips1 =  b.YData(l);
+        labels1 = string(b.YData(l));
+        text(xtips1,ytips1,{labels1},'HorizontalAlignment','center',...
+            'VerticalAlignment','bottom')
+    end
 
 subplot(2,1,2)
-b = bar([iupr_new]);
+b1 = bar([iupr_new]);
 grid on
 set(gca,'XTickLabel',{Capability.Name})
 set(gca,'TickLabelInterpreter','none')
@@ -155,5 +159,14 @@ xlabel('Field Test Trucks')
 ylabel('IUPR Estimate')
 title('Step3 V2b calibration')
 suptitle('IUPR Estimates, From Jan 1st to April 30th')
+
+   for l = 1:numel(b1.XData)
+        xtips1 = b1.XData(l);
+        ytips1 =  b1.YData(l);
+        labels1 = string(b1.YData(l));
+        text(xtips1,ytips1,{labels1},'HorizontalAlignment','center',...
+            'VerticalAlignment','bottom')
+   end
+    
 savefig('All Truck IUPR')
 close(gcf)
