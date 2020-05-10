@@ -29,11 +29,11 @@ legend('Valid Pressure drop flag','Test Cylinder number')
 xlim([ tstart tend])
 
 ax(4)=subplot(513)
-plot(time_200,Residual,'o')
+plot(ResidualTime,Residual,'o')
 ylim([ 0 120])
 hold on
 yyaxis right 
-plot(time_200,Leakage)
+plot(LeakageTime,Leakage)
 legend('Residuals','Parasitic Leakage')
 xlim([ tstart tend])
 
