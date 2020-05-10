@@ -82,7 +82,7 @@ figure(2)
 clf
 
 colorOrder = get(gca,'ColorOrder');
-for i = 3:numel(Capability)
+for i = 1:numel(Capability)
     
     iupr_old(i) = sum(~isnan(Capability(i).TimetoDec))/size(Capability(i).KeyCycles,1);
     iupr_new(i) = sum(Capability(i).New_Mot > Capability(i).TimetoDec)/size(Capability(i).KeyCycles,1);
@@ -130,7 +130,7 @@ for i = 3:numel(Capability)
     savefig(strcat('IUPR-',Capability(i).Name))
     close(gcf)
     
-end 
+end
 
 
 subplot(2,1,1)
@@ -154,6 +154,4 @@ set(gca,'TickLabelInterpreter','none')
 xlabel('Field Test Trucks')
 ylabel('IUPR Estimate')
 title('Step3 V2b calibration')
-suptitle('IUPR Estimates, From Jan 1st to April 30th')
-savefig('All Truck IUPR')
-close(gcf)
+suptitle('IUPR Estimates, From Jan 1st to April 30th')          
