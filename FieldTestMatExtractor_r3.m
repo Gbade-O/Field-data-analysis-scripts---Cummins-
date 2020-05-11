@@ -35,7 +35,8 @@ for j = 1:numel(MAT)
     Fdbk{i,cnt} = APC_hp_Fdbk_200ms.';
     Total_fueling{i,cnt} = Total_Fueling_200ms.';
     Engine_Speed2{i,cnt} = Engine_Speed_1_Sec_Screen_2.';
-    Engine_Speed_1s{i,cnt} = Engine_Speed_200ms.';
+    Engine_Speed_200s{i,cnt} = Engine_Speed_200ms.';
+    
     Mot_flag{i,cnt} = CBM_Mot_Flag_200ms.';
     EstFuel{i,cnt} = IFM_q_EOCEstFueling_200ms.';
     TestCylNum{i,cnt} = IFM_ct_EOCTestCylNum_200ms.';
@@ -68,17 +69,21 @@ for j = 1:numel(MAT)
     if ismember('IFM_hp_Residual_200ms',listOfVariables)
         Residual{i,cnt} = IFM_hp_Residual_200ms.';
         ResidualTime{i,cnt} = PC_TStamp_Datenum_200_Sec.';
+        Resid_Engine_Speed{i,cnt} = Engine_Speed_200ms.';
+        
     elseif ismember('IFM_hp_Residual',listOfVariables)
         Residual{i,cnt} = IFM_hp_Residual.';
-        ResidualTime{i,cnt} = PC_TStamp_Datenum_10_Sec.';
+        ResidualTime{i,cnt} = PC_TStamp_Datenum.';
+        Resid_Engine_Speed{i,cnt} = Engine_Speed.';
+        
     end
     
     if ismember('IFM_r_ParasiticLeakage_200ms',listOfVariables)
-        Leakage{i,cnt} = IFM_hp_Residual_200ms.';
+        Leakage{i,cnt} = IFM_r_ParasiticLeakage_200ms.';
         LeakageTime{i,cnt} = PC_TStamp_Datenum_200_Sec.';
     elseif ismember('IFM_r_ParasiticLeakage',listOfVariables)
-        Leakage{i,cnt} = IFM_hp_Residual.';
-        LeakageTime{i,cnt} = PC_TStamp_Datenum_10_Sec.';
+        Leakage{i,cnt} = IFM_r_ParasiticLeakage.';
+        LeakageTime{i,cnt} = PC_TStamp_Datenum.';
     end
  
     DosingFuel{i,cnt} = P_FED_q_DosingFuelAdj_10_Sec.';
@@ -108,7 +113,7 @@ Cmd= cat(2,Cmd{:});
 Fdbk = cat(2,Fdbk{:});
 Total_fueling = cat(2,Total_fueling{:});
 Engine_Speed = cat(2,Engine_Speed2{:});
-Engine_Speed_1s = cat(2,Engine_Speed_1s{:});
+Engine_Speed_200s = cat(2,Engine_Speed_200s{:});
 Mot_flag = cat(2,Mot_flag{:});
 EstFuel = cat(2,EstFuel{:});
 TestCylNum= cat(2,TestCylNum{:});
@@ -131,7 +136,7 @@ SetPump = cat(2,SetPump{:});
 FedTime= cat(2,FedTime{:});
 ResidualTime = cat(2,ResidualTime{:});
 LeakageTime = cat(2,LeakageTime{:});
-
+Resid_Engine_Speed = cat(2,Resid_Engine_Speed{:});
 
 
 
@@ -142,8 +147,8 @@ time_1 = Timestamp(time_1s,0);
 time_200 = Timestamp(time_200s,0);
 time_0 = Timestamp(time,0);
 FedTime=  Timestamp(FedTime,0);
-ResidualTime = Timestamp(FedTime,0);
-LeakageTime = Timestamp(FedTime,0);
+ResidualTime = Timestamp(ResidualTime,0);
+LeakageTime = Timestamp(LeakageTime,0);
 
 NewFolder = strcat('Capability-',datestr(datetime('today')));
 mkdir(MainDir,NewFolder)
@@ -176,8 +181,7 @@ save workspace
 % fix = find( ~(time_40s > datetime(2020,03,22,23,59,00)));
 % 
 
-tstart = MAT(1).date;
-tend =MAT(end).date;
+
 Color_Vec = [ 'k', 'g' ,'b', 'm', 'r','c'];
 max_fuel =0;
 min_fuel =0;
@@ -249,40 +253,40 @@ linkaxes(ag,'x');
 savefig(strcat(MainDir,'\',NewFolder,'\','FEDTimeSeries.fig'))
 close(gcf)
 
-figure(2)
-for i = 1:6
-    
-    Cyl = cat(2,CylAve{i,:});
-    cnt = 1;
-    for j = 1:length(Cyl)-1
-        if(Cyl(j+1) ~=Cyl(i))
-            unique_idx2(cnt) = j;
-            cnt = cnt +1;
-        end
-    end
-    Cyl2 = Cyl(unique_idx2);
-    cylind = find(~(Cyl2 ==0));
-    Cyl = Cyl2(cylind);
-    subplot(2,3,i)
-   h1= histfit(Cyl);
-   d = fitdist(Cyl.','normal');
-   
-    hold on
-    plot(d.mean*ones(1,max(h1(1).YData)),1:max(h1(1).YData),'r--','LineWidth',3)
-    ylim([ 0 max(h1(1).YData)+100])
-    minA = min(h1(1).YData)-1;
-    maxB =max(h1(1).YData)+1;
-    xlim([-10 10])
-    xticks([-10:1:10])
-    title(strcat('Cylinder',int2str(i),'Distribution'))
-    legend('Cylinder distribution','Mean of distribution')
-    
-end
-xlabel('FED Decisions(mg/strk)')
-ylabel('Frequency')
-suptitle(sprintf('%s, from %s to %s',MAT(1).name(1:10),tstart,tend))
-savefig(strcat(MainDir,'\',NewFolder,'\','CylDistribution.fig'))
-close(gcf)
+% figure(2)
+% for i = 1:6
+%     
+%     Cyl = cat(2,CylAve{i,:});
+%     cnt = 1;
+%     for j = 1:length(Cyl)-1
+%         if(Cyl(j+1) ~=Cyl(i))
+%             unique_idx2(cnt) = j;
+%             cnt = cnt +1;
+%         end
+%     end
+%     Cyl2 = Cyl(unique_idx2);
+%     cylind = find(~(Cyl2 ==0));
+%     Cyl = Cyl2(cylind);
+%     subplot(2,3,i)
+%    h1= histfit(Cyl);
+%    d = fitdist(Cyl.','normal');
+%    
+%     hold on
+%     plot(d.mean*ones(1,max(h1(1).YData)),1:max(h1(1).YData),'r--','LineWidth',3)
+%     ylim([ 0 max(h1(1).YData)+100])
+%     minA = min(h1(1).YData)-1;
+%     maxB =max(h1(1).YData)+1;
+%     xlim([-10 10])
+%     xticks([-10:1:10])
+%     title(strcat('Cylinder',int2str(i),'Distribution'))
+%     legend('Cylinder distribution','Mean of distribution')
+%     
+% end
+% xlabel('FED Decisions(mg/strk)')
+% ylabel('Frequency')
+% suptitle(sprintf('%s, from %s to %s',MAT(1).name(1:10),tstart,tend))
+% savefig(strcat(MainDir,'\',NewFolder,'\','CylDistribution.fig'))
+% close(gcf)
 
 
 
@@ -334,9 +338,9 @@ for j = 1:length(Residual)-1
 end
 
 subplot(211)
-plot(Engine_Speed_1s(unique_idx),Residual(unique_idx),'o')
+plot(Resid_Engine_Speed(unique_idx),Residual(unique_idx),'o')
 hold on
-plot(Engine_Speed_1s(unique_idx),40*ones(1,length(unique_idx)),'r--')
+plot(Resid_Engine_Speed(unique_idx),40*ones(1,length(unique_idx)),'r--')
 xlabel('Engine Speed')
 ylabel('Residual')
 title('Residuals vs EngineSpeed')

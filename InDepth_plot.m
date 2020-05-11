@@ -2,7 +2,7 @@
 
 %%
 ax(1) = subplot(511)
-plot(time_200,Engine_Speed_1s,time_200,Cmd,time_200,Fdbk)
+plot(time_200,Engine_Speed_200s,time_200,Cmd,time_200,Fdbk)
 hold on
 yyaxis right 
 plot(time_200,Total_fueling)
