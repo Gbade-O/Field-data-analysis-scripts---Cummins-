@@ -1,13 +1,13 @@
 %% FED Field test data processing script 
 clc;clear all
 tic
-MainDir = {'C:\Users\pb875\Desktop\RandomDesktopStuff\CDAT\Chrysler\Asymmetric'};
+MainDir = {'C:\Users\pb875\Desktop\RandomDesktopStuff\CDAT\Chrysler\Temp Data'};
 Subdir = dir(MainDir{:});
-Subdir = Subdir(contains({Subdir.name},{'Thunderbolt'}));
+Subdir = Subdir(contains({Subdir.name},{'VSO','VHO'}));
 
 
-d1 = '2018-12-1 6:00:00';
-d2 = '2020-04-30 23:00:00';
+d1 = '2020-4-30 6:00:00';
+d2 = '2020-5-12 23:00:00';
 t = datetime(d1,'InputFormat','yyyy-MM-dd HH:mm:ss')
 t1 = datetime(d2,'InputFormat','yyyy-MM-dd HH:mm:ss')
 tstart = t;
@@ -19,9 +19,14 @@ CleanDate2 = datenum(t1);
 addpath('C:\Users\pb875\OneDrive - Cummins\Programs\Scripts')
 Params = ReadParams('C:\Users\pb875\OneDrive - Cummins\Programs\Scripts\UsefulOverlays_FiltFiles\FieldTest_Parameters_Chrysler.txt');
 cnt = 1;
+
+SpecificTrucks = {'T6211','T5683','T0676','T1295','T9699'};
+
+
 for j = 1:numel(Subdir)
     
     Truckfolders = dir(strcat(Subdir(j).folder,'\',Subdir(j).name,'\T*'));
+    Truckfolders = Truckfolders(contains({Truckfolders.name},SpecificTrucks));
     
     for k = 1:numel(Truckfolders)
         addpath('C:\Users\pb875\Documents\GitHub\Scripts')
@@ -32,25 +37,26 @@ for j = 1:numel(Subdir)
         
     end
 end
+
 toc
 
-% %% Capability plots 
+%% Capability plots 
 % toc
-save workspace
+
 % %% plot AFS
 h =figure(1)
 clf
-
+save workspace
 
 for i = 1:numel(Capability)
     
-    a=subplot(2,1,1)
-    plot(a,Capability(i).Old_TimeAxis,Capability(i).Old_PumpingCnts,'o','displayname','old cal')
-    grid on
-   hold on
+%     a=subplot(2,1,1)
+%     plot(a,Capability(i).Old_TimeAxis,Capability(i).Old_PumpingCnts,'o','displayname','old cal')
+%     grid on
+%    hold on
     
     
-    a1=subplot(2,1,2)
+    a1=subplot(2,1,1:2)
     plot(a1,Capability(i).New_TimeAxis,Capability(i).New_PumpingCnts,'s','displayname','new cal')
     hold on
     grid on
@@ -82,7 +88,7 @@ figure(2)
 clf
 
 colorOrder = get(gca,'ColorOrder');
-for i = 3:numel(Capability)
+for i = 1:numel(Capability)
     
     iupr_old(i) = sum(~isnan(Capability(i).TimetoDec))/size(Capability(i).KeyCycles,1);
     iupr_new(i) = sum(Capability(i).New_Mot > Capability(i).TimetoDec)/size(Capability(i).KeyCycles,1);

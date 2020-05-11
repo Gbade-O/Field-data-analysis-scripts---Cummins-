@@ -1,13 +1,13 @@
 %% FED Field test data processing script 
 clc;clear all
 tic
-MainDir = {'C:\Users\pb875\Desktop\RandomDesktopStuff\CDAT\Chrysler\Symmetric'};
+MainDir = {'C:\Users\pb875\Desktop\RandomDesktopStuff\CDAT\Chrysler\Temp Data'};
 Subdir = dir(MainDir{:});
-Subdir = Subdir(contains({Subdir.name},{'VSO','VHO','Thunderbolt'}));
+Subdir = Subdir(contains({Subdir.name},{'VSO','VHO'}));
 
 
-d1 = '2020-1-1 6:00:00';
-d2 = '2020-04-30 23:00:00';
+d1 = '2020-4-30 6:00:00';
+d2 = '2020-5-12 23:00:00';
 t = datetime(d1,'InputFormat','yyyy-MM-dd HH:mm:ss')
 t1 = datetime(d2,'InputFormat','yyyy-MM-dd HH:mm:ss')
 tstart = t;
@@ -19,9 +19,14 @@ CleanDate2 = datenum(t1);
 addpath('C:\Users\pb875\OneDrive - Cummins\Programs\Scripts')
 Params = ReadParams('C:\Users\pb875\OneDrive - Cummins\Programs\Scripts\UsefulOverlays_FiltFiles\FieldTest_Parameters_Chrysler.txt');
 cnt = 1;
+
+SpecificTrucks = {'T6211','T5683','T0676','T1295','T9699'};
+
+
 for j = 1:numel(Subdir)
     
     Truckfolders = dir(strcat(Subdir(j).folder,'\',Subdir(j).name,'\T*'));
+    Truckfolders = Truckfolders(contains({Truckfolders.name},SpecificTrucks));
     
     for k = 1:numel(Truckfolders)
         addpath('C:\Users\pb875\Documents\GitHub\Scripts')
@@ -32,57 +37,58 @@ for j = 1:numel(Subdir)
         
     end
 end
+
 toc
 
-% %% Capability plots 
+%% Capability plots 
 % toc
+
+% %% plot AFS
+h =figure(1)
+clf
 save workspace
-% % %% plot AFS
-% h =figure(1)
-% clf
+
+for i = 1:numel(Capability)
+    
+    a=subplot(2,1,1)
+    plot(a,Capability(i).Old_TimeAxis,Capability(i).Old_PumpingCnts,'o','displayname','old cal')
+    grid on
+   hold on
+    
+    
+    a1=subplot(2,1,2)
+    plot(a1,Capability(i).New_TimeAxis,Capability(i).New_PumpingCnts,'s','displayname','new cal')
+    hold on
+    grid on
+    
+    %     ylabel('sim P_BPD_ct_IFMPumping (batch max)','Interpreter','none')
+    %
+    %     h1 = subplot(2,1,2)
+    %     hold on
+    %     histogram(Capability(i).Old_PumpingCnts,'Normalization','probability','DisplayName',sprintf('old cal (n = %d)',length(Capability(i).Old_PumpingCnts)))
+    %     histogram(Capability(i).New_PumpingCnts,'Normalization','probability','DisplayName',sprintf('new cal (n = %d)',length(Capability(i).New_PumpingCnts)))
+    %     legend show
+    %     grid on
+    %     ylabel('density (%)')
+    
+end
+
+plot(a,xticks,21*ones(1,numel(xticks)),'r--')
+plot(a1,xticks,21*ones(1,numel(xticks)),'r--')
+legend(a1,{Capability(:).Name,'Threshold'},'Interpreter','none')
+title(a,'BPD error counter without step 3 fix')
+legend(a,{Capability(:).Name,'Threshold'},'Interpreter','none')
+title(a1,'BPD error counter with step 3 fix')
+ylabel(a1,'Error Counter')
+ylabel(a,'Error Counter')
+% toc
 % 
-% 
-% for i = 1:numel(Capability)
-%     
-%     a=subplot(2,1,1)
-%     plot(a,Capability(i).Old_TimeAxis,Capability(i).Old_PumpingCnts,'o','displayname','old cal')
-%     grid on
-%    hold on
-%     
-%     
-%     a1=subplot(2,1,2)
-%     plot(a1,Capability(i).New_TimeAxis,Capability(i).New_PumpingCnts,'s','displayname','new cal')
-%     hold on
-%     grid on
-%     
-%     %     ylabel('sim P_BPD_ct_IFMPumping (batch max)','Interpreter','none')
-%     %
-%     %     h1 = subplot(2,1,2)
-%     %     hold on
-%     %     histogram(Capability(i).Old_PumpingCnts,'Normalization','probability','DisplayName',sprintf('old cal (n = %d)',length(Capability(i).Old_PumpingCnts)))
-%     %     histogram(Capability(i).New_PumpingCnts,'Normalization','probability','DisplayName',sprintf('new cal (n = %d)',length(Capability(i).New_PumpingCnts)))
-%     %     legend show
-%     %     grid on
-%     %     ylabel('density (%)')
-%     
-% end
-% 
-% plot(a,xticks,21*ones(1,numel(xticks)),'r--')
-% plot(a1,xticks,21*ones(1,numel(xticks)),'r--')
-% legend(a1,{Capability(:).Name,'Threshold'},'Interpreter','none')
-% title(a,'BPD error counter without step 3 fix')
-% legend(a,{Capability(:).Name,'Threshold'},'Interpreter','none')
-% title(a1,'BPD error counter with step 3 fix')
-% ylabel(a1,'Error Counter')
-% ylabel(a,'Error Counter')
-% % toc
-% % 
 %% plot AFS
 figure(2)
 clf
 
 colorOrder = get(gca,'ColorOrder');
-for i = 1:numel(Capability)
+for i = 3:numel(Capability)
     
     iupr_old(i) = sum(~isnan(Capability(i).TimetoDec))/size(Capability(i).KeyCycles,1);
     iupr_new(i) = sum(Capability(i).New_Mot > Capability(i).TimetoDec)/size(Capability(i).KeyCycles,1);
@@ -130,11 +136,11 @@ for i = 1:numel(Capability)
     savefig(strcat('IUPR-',Capability(i).Name))
     close(gcf)
     
-end
+end 
 
 
 subplot(2,1,1)
-b = bar([iupr_old]);
+b = bar([iupr_old])
 grid on
 set(gca,'XTickLabel',{Capability.Name})
 set(gca,'TickLabelInterpreter','none')
@@ -142,16 +148,31 @@ xlabel('Field Test Trucks')
 ylabel('IUPR Estimate')
 title('Base V2b calibration')
 
-for j = 1:numel(b)
-    b(j).FaceColor = colorOrder(j,:);
-end
+   for l = 1:numel(b.XData)
+        xtips1 = b.XData(l);
+        ytips1 =  b.YData(l);
+        labels1 = string(b.YData(l));
+        text(xtips1,ytips1,{labels1},'HorizontalAlignment','center',...
+            'VerticalAlignment','bottom')
+    end
 
 subplot(2,1,2)
-b = bar([iupr_new]);
+b1 = bar([iupr_new]);
 grid on
 set(gca,'XTickLabel',{Capability.Name})
 set(gca,'TickLabelInterpreter','none')
 xlabel('Field Test Trucks')
 ylabel('IUPR Estimate')
 title('Step3 V2b calibration')
-suptitle('IUPR Estimates, From Jan 1st to April 30th')          
+suptitle('IUPR Estimates, From Jan 1st to April 30th')
+
+   for l = 1:numel(b1.XData)
+        xtips1 = b1.XData(l);
+        ytips1 =  b1.YData(l);
+        labels1 = string(b1.YData(l));
+        text(xtips1,ytips1,{labels1},'HorizontalAlignment','center',...
+            'VerticalAlignment','bottom')
+   end
+    
+savefig('All Truck IUPR')
+close(gcf)
