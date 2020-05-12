@@ -68,7 +68,7 @@ for j = 1:numel(MAT)
     
     if ismember('IFM_hp_Residual_200ms',listOfVariables)
         Residual{i,cnt} = IFM_hp_Residual_200ms.';
-        ResidualTime{i,cnt} = PC_TStamp_Datenum_200_Sec.';
+        ResidualTime{i,cnt} = PC_TStamp_Datenum_200ms.';
         Resid_Engine_Speed{i,cnt} = Engine_Speed_200ms.';
         
     elseif ismember('IFM_hp_Residual',listOfVariables)
@@ -80,7 +80,7 @@ for j = 1:numel(MAT)
     
     if ismember('IFM_r_ParasiticLeakage_200ms',listOfVariables)
         Leakage{i,cnt} = IFM_r_ParasiticLeakage_200ms.';
-        LeakageTime{i,cnt} = PC_TStamp_Datenum_200_Sec.';
+        LeakageTime{i,cnt} = PC_TStamp_Datenum_200ms.';
     elseif ismember('IFM_r_ParasiticLeakage',listOfVariables)
         Leakage{i,cnt} = IFM_r_ParasiticLeakage.';
         LeakageTime{i,cnt} = PC_TStamp_Datenum.';
@@ -221,7 +221,7 @@ hold off
 suptitle(sprintf('%s, from %s to %s',MAT(1).name(1:10),tstart,tend))
 
 ag(2)=subplot(312)
-plot(time_200,Coolant);
+plot(time_200,Coolant(1:length(time_200)));
 ylim([30 95])
 xlim([tstart tend])
 ylabel('Coolant Temp')
