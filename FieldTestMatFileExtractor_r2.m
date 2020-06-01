@@ -1,13 +1,13 @@
 %% FED Field test data processing script 
 clc;clear all
 tic
-MainDir = {'C:\Users\pb875\Desktop\RandomDesktopStuff\CDAT\Chrysler\Temp Data'};
+MainDir = {'C:\Users\pb875\Desktop\RandomDesktopStuff\CDAT\Chrysler\Temp Data\Thunderbolt'};
 Subdir = dir(MainDir{:});
-Subdir = Subdir(contains({Subdir.name},{'VSO','VHO'}));
+Subdir = Subdir(contains({Subdir.name},{'OldTrucks'}));
 
 
-d1 = '2020-4-30 6:00:00';
-d2 = '2020-5-12 23:00:00';
+d1 = '2019-4-30 6:00:00';
+d2 = '2019-9-1 23:00:00';
 t = datetime(d1,'InputFormat','yyyy-MM-dd HH:mm:ss')
 t1 = datetime(d2,'InputFormat','yyyy-MM-dd HH:mm:ss')
 tstart = t;
@@ -20,7 +20,7 @@ addpath('C:\Users\pb875\OneDrive - Cummins\Programs\Scripts')
 Params = ReadParams('C:\Users\pb875\OneDrive - Cummins\Programs\Scripts\UsefulOverlays_FiltFiles\FieldTest_Parameters_Chrysler.txt');
 cnt = 1;
 
-SpecificTrucks = {'T6211','T5683','T0676','T1295','T9699'};
+SpecificTrucks = {'T'};
 
 
 for j = 1:numel(Subdir)
@@ -32,7 +32,7 @@ for j = 1:numel(Subdir)
         addpath('C:\Users\pb875\Documents\GitHub\Scripts')
         DataDir = strcat(strcat(Truckfolders(k).folder,'\',Truckfolders(k).name,'\Matfiles')); %% Where the matfiles are saved
         SaveDir = strcat(strcat(Truckfolders(k).folder,'\',Truckfolders(k).name)); %%Location to save plots and workspace
-        Capability(cnt) = FieldTestMatExtractor_r4(DataDir,SaveDir,CleanDate1,CleanDate2,Params,tstart,tend);
+        Capability(cnt) = FieldTestMatExtractor_r4_OldScreenFileVersion(DataDir,SaveDir,CleanDate1,CleanDate2,Params,tstart,tend);
         cnt =cnt+1;
         
     end
