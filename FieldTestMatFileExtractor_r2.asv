@@ -17,7 +17,7 @@ CleanDate2 = datenum(t1);
 
 
 addpath('C:\Users\pb875\OneDrive - Cummins\Programs\Scripts')
-Params = ReadParams('C:\Users\pb875\OneDrive - Cummins\Programs\Scripts\UsefulOverlays_FiltFiles\FieldTest_Parameters_Chrysler.txt');
+Params = ReadParams('C:\Users\pb875\OneDrive - Cummins\Programs\Scripts\UsefulOverlays_FiltFiles\FieldTest_Parameters_Chrysler_OldScreen.txt');
 cnt = 1;
 
 SpecificTrucks = {'T'};
@@ -32,7 +32,7 @@ for j = 1:numel(Subdir)
         addpath('C:\Users\pb875\Documents\GitHub\Scripts')
         DataDir = strcat(strcat(Truckfolders(k).folder,'\',Truckfolders(k).name,'\Matfiles')); %% Where the matfiles are saved
         SaveDir = strcat(strcat(Truckfolders(k).folder,'\',Truckfolders(k).name)); %%Location to save plots and workspace
-        Capability(cnt) = FieldTestMatExtractor_r4_OldS(DataDir,SaveDir,CleanDate1,CleanDate2,Params,tstart,tend);
+        Capability(cnt) = FieldTestMatExtractor_OldScreen_r4(DataDir,SaveDir,CleanDate1,CleanDate2,Params,tstart,tend);
         cnt =cnt+1;
         
     end
@@ -50,10 +50,10 @@ save workspace
 
 for i = 1:numel(Capability)
     
-%     a=subplot(2,1,1)
-%     plot(a,Capability(i).Old_TimeAxis,Capability(i).Old_PumpingCnts,'o','displayname','old cal')
-%     grid on
-%    hold on
+    a=subplot(2,1,1)
+    plot(a,Capability(i).Old_TimeAxis,Capability(i).Old_PumpingCnts,'o','displayname','old cal')
+    grid on
+   hold on
     
     
     a1=subplot(2,1,1:2)
@@ -95,30 +95,30 @@ for i = 1:numel(Capability)
     
     
     
-    %     a1 = subplot(2,2,1:2)
-    %     b = bar(a1,[Capability(i).Old_Mot,Capability(i) .TimetoDec,Capability(i).New_Mot]);
-    %     legend({'motoring time - old cal','motoring time until FED decision - old cal','motoring time - new cal'})
-    %     grid on
-    %     set(gca,'XTickLabel',datestr(iupr_startTime))
-    %     set(gca,'XTick',get(b(1),'XData'))
-    %     set(gca,'XTickLabel',iupr_keyCycle)
-    %     xlabel('OBD Key Cycle')
-    %     ylabel('motoring time (s)')
-    %
-    %     for j = 1:3
-    %         b(j).FaceColor = colorOrder(j,:);
-    %     end
+        a1 = subplot(2,2,1:2)
+        b = bar(a1,[Capability(i).Old_Mot,Capability(i) .TimetoDec,Capability(i).New_Mot]);
+        legend({'motoring time - old cal','motoring time until FED decision - old cal','motoring time - new cal'})
+        grid on
+        set(gca,'XTickLabel',datestr(iupr_startTime))
+        set(gca,'XTick',get(b(1),'XData'))
+        set(gca,'XTickLabel',iupr_keyCycle)
+        xlabel('OBD Key Cycle')
+        ylabel('motoring time (s)')
     
-    %     subplot(2,2,3)
-    %     hold on
-    %
-    %     n = length(iupr_oldCalMotTime);
-    %     g = cat(1,repmat({'old cal'},n,1),repmat({'FED decision'},n,1),repmat({'new cal'},n,1));
-    %     boxplot([iupr_oldCalMotTime;iupr_MotTimeToFedDec;iupr_newCalMotTime],g,...
-    %         'Orientation','horizontal','ColorGroup',{'old cal','FED decision','new cal'},'Colors',colorOrder,'BoxStyle','filled')
-    %     grid on
-    %     xlabel('motoring time (s)')
-    %
+        for j = 1:3
+            b(j).FaceColor = colorOrder(j,:);
+        end
+    
+        subplot(2,2,3)
+        hold on
+    
+        n = length(iupr_oldCalMotTime);
+        g = cat(1,repmat({'old cal'},n,1),repmat({'FED decision'},n,1),repmat({'new cal'},n,1));
+        boxplot([iupr_oldCalMotTime;iupr_MotTimeToFedDec;iupr_newCalMotTime],g,...
+            'Orientation','horizontal','ColorGroup',{'old cal','FED decision','new cal'},'Colors',colorOrder,'BoxStyle','filled')
+        grid on
+        xlabel('motoring time (s)')
+    
     
     a = bar([size(Capability(i).KeyCycles,1),sum(~isnan(Capability(i).TimetoDec)),sum(Capability(i).New_Mot > Capability(i).TimetoDec)])
     set(gca,'XTickLabel',{'Total Key Cycles','Key cycles w/ FED decisions - old cal','Key cycles w/ sufficient mot. time for FED - new cal'})

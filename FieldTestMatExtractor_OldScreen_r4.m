@@ -1,4 +1,4 @@
-function Capability = FieldTestMatExtractor_r4( TrucksDir,MainDir,CleanDatebegin,CleanDateEnd,Params,tstart,tend )
+function Capability = FieldTestMatExtractor_OldScreen_r4( TrucksDir,MainDir,CleanDatebegin,CleanDateEnd,Params,tstart,tend )
 %UNTITLED Summary of this function goes here
 %   Detailed explanation goes here
 
@@ -25,8 +25,8 @@ for j = 1:numel(MAT)
     load(strcat(MAT(j).folder,'\',MAT(j).name),Params{:},'H_FED_q*')
     
     time{i,cnt} = PC_TStamp_Datenum.';
-    time_1s{i,cnt} = PC_TStamp_Datenum_1_Sec_Screen_2.';
-    time_10s{i,cnt} = PC_TStamp_Datenum_10_Sec.';
+%     time_1s{i,cnt} = PC_TStamp_Datenum_1_Sec_Screen_2.';
+%     time_10s{i,cnt} = PC_TStamp_Datenum_10_Sec.';
     time_200s{i,cnt} = PC_TStamp_Datenum_200ms.';
     %         MeanInjPrs{i,cnt} = IFM_hp_EOCMeanInjPressure_200ms.';
 %     Residual{i,cnt} = IFM_hp_Residual.';
@@ -39,8 +39,8 @@ for j = 1:numel(MAT)
     Cmd{i,cnt} = APC_hp_Cmd_200ms.';
     Fdbk{i,cnt} = APC_hp_Fdbk_200ms.';
     Total_fueling{i,cnt} = Total_Fueling_200ms.';
-    Engine_Speed2{i,cnt} = Engine_Speed_1_Sec_Screen_2.';
-    Engine_Speed_1s{i,cnt} = Engine_Speed.';
+%     Engine_Speed2{i,cnt} = Engine_Speed_1_Sec_Screen_2.';
+    Engine_Speed_1{i,cnt} = Engine_Speed.';
     Engine_Speed200ms{i,cnt} = Engine_Speed_200ms.';
     %         Mot_flag{i,cnt} = CBM_Mot_Flag_200ms.';
     %         EstFuel{i,cnt} = IFM_q_EOCEstFueling_200ms.';
@@ -52,19 +52,19 @@ for j = 1:numel(MAT)
     %         DLAtime_1s{i,cnt} = DLA_Timestamp_1_Sec_Screen_2.';
     %         DLAtime_10s{i,cnt} = DLA_Timestamp_10_Sec.';
     %         DLAtime_200s{i,cnt} = DLA_Timestamp_200ms.';
-    PRV_cmd{i,cnt} = PRV_i_Cmd_200ms.';
-    PRV_fdbk{i,cnt} = PRV_i_Fdbk_200ms.';
-    %         APC_qr{i,cnt} = APC_qr_Cmd_200ms.';
-    IMA_cmd{i,cnt} = H_IMA_i_Cmd_200ms.';
-    IMA_fdbk{i,cnt} = H_IMA_i_Fltr_200ms.';
-    SetPump{i,cnt} = P_BPD_ct_SetIfmPumpErr_10_Sec.';
-    KeyCycles{i,cnt} = OBD_Number_Of_Key_Cycles_10_Sec.';
+%     PRV_cmd{i,cnt} = PRV_i_Cmd_200ms.';
+%     PRV_fdbk{i,cnt} = PRV_i_Fdbk_200ms.';
+%     %         APC_qr{i,cnt} = APC_qr_Cmd_200ms.';
+%     IMA_cmd{i,cnt} = H_IMA_i_Cmd_200ms.';
+%     IMA_fdbk{i,cnt} = H_IMA_i_Fltr_200ms.';
+%     SetPump{i,cnt} = P_BPD_ct_SetIfmPumpErr_10_Sec.';
+    KeyCycles{i,cnt} = OBD_General_Denominator.';
     VehSpeed{i,cnt} = Vehicle_Speed_200ms.';
-    if ismember('H_FED_q_CylAveFuelingErrors0_10_Sec',listOfVariables)
+    if ismember('H_FED_q_CylAveFuelingErrors0',listOfVariables)
         for k = 1:6
-            CylAve{k,cnt} = eval(['H_FED_q_CylAveFuelingErrors',int2str(k-1),'_10_Sec']).';
+            CylAve{k,cnt} = eval(['H_FED_q_CylAveFuelingErrors',int2str(k-1)]).';
         end
-        FedTime{i,cnt} = PC_TStamp_Datenum_10_Sec.';
+        FedTime{i,cnt} = PC_TStamp_Datenum.';
     elseif ismember('H_FED_q_CylAveFuelingErrors0_200ms',listOfVariables)
         for k = 1:6
             CylAve{k,cnt} = eval(['H_FED_q_CylAveFuelingErrors',int2str(k-1),'_200ms']).';
@@ -84,9 +84,9 @@ cd(MainDir)
 
 %% Concatenate daily matfiles, into one long data vector 
 time = cat(2,time{:});
-time_1s = cat(2,time_1s{:});
+% time_1s = cat(2,time_1s{:});
 % Coolant = cat(2,Coolant_Temp{:});
-time_10s =cat(2,time_10s{:});
+% time_10s =cat(2,time_10s{:});
 time_200s=cat(2,time_200s{:});
 % MeanInjPrs= cat(2,MeanInjPrs{:});
 % Residual = cat(2,Residual{:});
@@ -98,8 +98,8 @@ Cycle= cat(2,Cycle{:});
 Cmd= cat(2,Cmd{:});
 Fdbk = cat(2,Fdbk{:});
 Total_fueling = cat(2,Total_fueling{:});
-Engine_Speed = cat(2,Engine_Speed2{:});
-Engine_Speed_1s = cat(2,Engine_Speed_1s{:});
+% Engine_Speed = cat(2,Engine_Speed2{:});
+Engine_Speed = cat(2,Engine_Speed_1{:});
 Engine_Speed200ms = cat(2,Engine_Speed200ms{:});
 % Mot_flag = cat(2,Mot_flag{:});
 % EstFuel = cat(2,EstFuel{:});
@@ -114,12 +114,12 @@ Engine_Speed200ms = cat(2,Engine_Speed200ms{:});
 % DLAtime_1s = cat(2,DLAtime_1s{:});
 % DLAtime_10s= cat(2,DLAtime_10s{:});
 % DLAtime_200s= cat(2,DLAtime_200s{:});
-PRV_cmd = cat(2,PRV_cmd{:});
-PRV_fdbk= cat(2,PRV_fdbk{:});
-% APC_qr= cat(2,APC_qr{:});
-IMA_cmd = cat(2,IMA_cmd{:});
-IMA_fdbk = cat(2,IMA_fdbk{:});
-SetPump = cat(2,SetPump{:});
+% PRV_cmd = cat(2,PRV_cmd{:});
+% PRV_fdbk= cat(2,PRV_fdbk{:});
+% % APC_qr= cat(2,APC_qr{:});
+% IMA_cmd = cat(2,IMA_cmd{:});
+% IMA_fdbk = cat(2,IMA_fdbk{:});
+% SetPump = cat(2,SetPump{:});
 KeyCycles = cat(2,KeyCycles{:});
 VehSpeed = cat(2,VehSpeed{:});
 FedTime = cat(2,FedTime{:});
@@ -146,7 +146,7 @@ end
 cycleLimit = 25;
 
 % convert PC Timestamp to datetime
-time_1 = Timestamp(time_1s,0);
+time_1 = Timestamp(time,0);
 
 % initialize counters
 oldcal_pumpCount = 0;
@@ -268,8 +268,8 @@ for j = (firstInd+1):length(KeyCycles)
         if KeyCycles(j) ~= currKeyCycle
             
             iupr_keyCycle = cat(1,iupr_keyCycle,currKeyCycle);
-            iupr_startTime = cat(1,iupr_startTime,time_10s(firstInd));
-            iupr_endTime = cat(1,iupr_endTime,time_10s(lastInd));
+            iupr_startTime = cat(1,iupr_startTime,time(firstInd));
+            iupr_endTime = cat(1,iupr_endTime,time(lastInd));
             
             firstInd = j;
             lastInd = j;
@@ -277,14 +277,17 @@ for j = (firstInd+1):length(KeyCycles)
             
         else
             lastInd = j;
+            if ( lastInd > numel(time))
+                lastInd = numel(time);
+            end
         end
     end
     
 end
 
 iupr_keyCycle = cat(1,iupr_keyCycle,currKeyCycle);
-iupr_startTime = cat(1,iupr_startTime,time_10s(firstInd));
-iupr_endTime = cat(1,iupr_endTime,time_10s(lastInd));
+iupr_startTime = cat(1,iupr_startTime,time(firstInd));
+iupr_endTime = cat(1,iupr_endTime,time(lastInd));
 
 % calculate motoring times for each cycle
 for j = 1:length(iupr_keyCycle)
