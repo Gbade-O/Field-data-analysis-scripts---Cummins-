@@ -1,4 +1,5 @@
 function FieldTestMatExtractor_r3( TrucksDir,MainDir,CleanDatebegin,CleanDateEnd,Params,tstart,tend )
+%UNTITLED Summary of this function goes here
 %   Function extracts individual parameters from mat files , assigns them
 %   to variables and creates multiple plots 
 

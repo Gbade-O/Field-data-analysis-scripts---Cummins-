@@ -1,11 +1,12 @@
 %% FED Field test data processing script 
 clc;clear all
 
+%Get Path to folders 
 MainDir = {'C:\Users\pb875\Desktop\RandomDesktopStuff\CDAT\Chrysler\Temp Data'};
 Subdir = dir(MainDir{:});
 Subdir = Subdir(contains({Subdir.name},{'VSO'}));
 
-
+%Provide date range to filter data files 
 d1 = '2020-5-1 6:00:00';
 d2 = '2020-5-12 6:00:00';
 t = datetime(d1,'InputFormat','yyyy-MM-dd HH:mm:ss')
@@ -14,18 +15,21 @@ tstart = t;
 tend = t1;
 CleanDate1 = datenum(t);
 CleanDate2 = datenum(t1);
+
+%Determine what parameters to extract from files, based on external list 
 addpath('C:\Users\pb875\OneDrive - Cummins\Programs\Scripts')
 Params = ReadParams('C:\Users\pb875\OneDrive - Cummins\Programs\Scripts\UsefulOverlays_FiltFiles\FieldTest_Parameters_Chrysler.txt');
 cnt = 1;
 
 
-% To run just one truck folder, use this override and edit lines 31,32 and
-% evaluate lines 31-36 only
+%This can be used as an override , if there is a particular truck to
+%process. ( instead of all directories)
 SpecificTrucks = {'T5683'};
 
+%Loop through subfolders and process data files 
 for j = 1:numel(Subdir)
     
-    %     Truckfolders = dir(strcat(Subdir(j).folder,'\',Subdir(j).name,'\T*'));
+  
     Truckfolders = dir(strcat(Subdir(j).folder,'\',Subdir(j).name,'\T*'));
     Truckfolders = Truckfolders(contains({Truckfolders.name},SpecificTrucks));
     
