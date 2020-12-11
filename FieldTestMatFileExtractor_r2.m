@@ -1,11 +1,13 @@
 %% FED Field test data processing script 
 clc;clear all
 tic
+
+%Get Path to folders 
 MainDir = {'C:\Users\pb875\Desktop\RandomDesktopStuff\CDAT\Chrysler\Temp Data\Thunderbolt'};
 Subdir = dir(MainDir{:});
 Subdir = Subdir(contains({Subdir.name},{'OldTrucks'}));
 
-
+%Provide date range to filter data files 
 d1 = '2019-4-30 6:00:00';
 d2 = '2019-9-1 23:00:00';
 t = datetime(d1,'InputFormat','yyyy-MM-dd HH:mm:ss')
@@ -15,14 +17,18 @@ tend = t1;
 CleanDate1 = datenum(t);
 CleanDate2 = datenum(t1);
 
-
+%Determine what parameters to extract from mat files, based on external
+%list 
 addpath('C:\Users\pb875\OneDrive - Cummins\Programs\Scripts')
 Params = ReadParams('C:\Users\pb875\OneDrive - Cummins\Programs\Scripts\UsefulOverlays_FiltFiles\FieldTest_Parameters_Chrysler_OldScreen.txt');
 cnt = 1;
 
+%This can be used as an override , if there is a particular truck to
+%process . ( instead of all in directory
 SpecificTrucks = {'T'};
 
 
+%Loop through subfolders and process data files 
 for j = 1:numel(Subdir)
     
     Truckfolders = dir(strcat(Subdir(j).folder,'\',Subdir(j).name,'\T*'));

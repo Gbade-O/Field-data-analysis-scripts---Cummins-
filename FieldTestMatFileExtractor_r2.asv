@@ -1,11 +1,13 @@
 %% FED Field test data processing script 
 clc;clear all
 tic
+
+%Get Path to folders 
 MainDir = {'C:\Users\pb875\Desktop\RandomDesktopStuff\CDAT\Chrysler\Temp Data\Thunderbolt'};
 Subdir = dir(MainDir{:});
 Subdir = Subdir(contains({Subdir.name},{'OldTrucks'}));
 
-
+%Provide date range to filter data files 
 d1 = '2019-4-30 6:00:00';
 d2 = '2019-9-1 23:00:00';
 t = datetime(d1,'InputFormat','yyyy-MM-dd HH:mm:ss')
@@ -15,7 +17,8 @@ tend = t1;
 CleanDate1 = datenum(t);
 CleanDate2 = datenum(t1);
 
-
+%Determine what parameters to extract from mat files, based on external
+%list 
 addpath('C:\Users\pb875\OneDrive - Cummins\Programs\Scripts')
 Params = ReadParams('C:\Users\pb875\OneDrive - Cummins\Programs\Scripts\UsefulOverlays_FiltFiles\FieldTest_Parameters_Chrysler_OldScreen.txt');
 cnt = 1;
@@ -99,9 +102,9 @@ for i = 1:numel(Capability)
         b = bar(a1,[Capability(i).Old_Mot,Capability(i) .TimetoDec,Capability(i).New_Mot]);
         legend({'motoring time - old cal','motoring time until FED decision - old cal','motoring time - new cal'})
         grid on
-        set(gca,'XTickLabel',datestr(iupr_startTime))
+%         set(gca,'XTickLabel',datestr(iupr_startTime))
         set(gca,'XTick',get(b(1),'XData'))
-        set(gca,'XTickLabel',iupr_keyCycle)
+        set(gca,'XTickLabel',Capability(i).KeyCycles)
         xlabel('OBD Key Cycle')
         ylabel('motoring time (s)')
     
@@ -112,9 +115,9 @@ for i = 1:numel(Capability)
         subplot(2,2,3)
         hold on
     
-        n = length(iupr_oldCalMotTime);
+        n = length(Capability(i).Old_Mot);
         g = cat(1,repmat({'old cal'},n,1),repmat({'FED decision'},n,1),repmat({'new cal'},n,1));
-        boxplot([iupr_oldCalMotTime;iupr_MotTimeToFedDec;iupr_newCalMotTime],g,...
+        boxplot([Capability(i).Old_Mot;Capability(i).TimetoDec;Capability(i).New_Mot],g,...
             'Orientation','horizontal','ColorGroup',{'old cal','FED decision','new cal'},'Colors',colorOrder,'BoxStyle','filled')
         grid on
         xlabel('motoring time (s)')

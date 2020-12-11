@@ -1,6 +1,6 @@
 
 
-%Create plots of interesting paramters and put in an interactive subplot 
+%Create plots of interesting 
 ax(1) = subplot(411)
 plot(time_200,Engine_Speed_200s,time_200,Cmd,time_200,Fdbk)
 hold on
